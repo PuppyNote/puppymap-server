@@ -5,8 +5,8 @@ ACTIVE_PORT=$(cat $APP_DIR/active_port 2>/dev/null || echo "8083")
 
 echo "Nginx 트래픽 전환: $ACTIVE_PORT → $INACTIVE_PORT"
 
-# Nginx proxy_pass 포트 변경 후 reload
-sudo sed -i "s/proxy_pass http:\/\/localhost:$ACTIVE_PORT/proxy_pass http:\/\/localhost:$INACTIVE_PORT/" /etc/nginx/nginx.conf
+# /web location 블록 안의 proxy_pass 포트만 교체
+sudo sed -i "/location \/web/,/}/{s/proxy_pass http:\/\/localhost:$ACTIVE_PORT/proxy_pass http:\/\/localhost:$INACTIVE_PORT/}" /etc/nginx/nginx.conf
 sudo nginx -t && sudo nginx -s reload
 
 # 활성 포트 파일 업데이트
