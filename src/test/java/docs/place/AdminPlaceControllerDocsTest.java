@@ -126,7 +126,7 @@ class AdminPlaceControllerDocsTest extends RestDocsSupport {
         willDoNothing().given(adminPlaceService).reject(anyLong(), anyString());
 
         mockMvc.perform(patch("/api/v1/admin/places/{placeId}/reject", 1L)
-                        .param("reason", "이미 폐업한 장소입니다.")
+                        .queryParam("reason", "이미 폐업한 장소입니다.")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
