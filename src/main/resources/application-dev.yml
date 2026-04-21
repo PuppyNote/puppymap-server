@@ -1,0 +1,92 @@
+server:
+  servlet:
+    context-path: /puppymap
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  datasource:
+    url: jdbc:mysql://${DB_HOST}:3306/puppymap?useSSL=true&serverTimezone=Asia/Seoul
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 3000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        jdbc:
+          exception-handling: ignore
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: puppynote0330@gmail.com
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      password: ${REDIS_PASSWORD}
+
+oauth:
+  kakao:
+    api:
+      url: https://kapi.kakao.com
+      name: kakaoApi
+  google:
+    api:
+      url: https://www.googleapis.com
+      name: googleApi
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+
+aws:
+  access-key: ${AWS_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY}
+  s3:
+    region: ap-northeast-2
+    bucket:
+      name: puppymap-dev
+  cloudfront:
+    domain: ${CLOUDFRONT_DOMAIN}
+
+elasticsearch:
+  host: ${ES_HOST}
+  port: 9200
+  username: ${ES_USERNAME}
+  password: ${ES_PASSWORD}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus, metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  health:
+    elasticsearch:
+      enabled: false
+  metrics:
+    tags:
+      application: puppymap-dev

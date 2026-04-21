@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: puppymap-server
+  profiles:
+    active: dev

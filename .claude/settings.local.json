@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir C:\\\\Users\\\\tkdrl\\\\Desktop\\\\PProject\\\\puppynote-server *)",
+      "Bash(dir C:\\\\Users\\\\tkdrl\\\\Desktop\\\\PProject\\\\puppymap-server *)"
+    ]
+  }
+}
