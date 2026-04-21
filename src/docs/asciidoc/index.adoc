@@ -6,12 +6,43 @@
 :toclevels: 2
 :sectlinks:
 
+== 인증 API
+
+include::auth/auth-login.adoc[]
+include::auth/auth-oauth-login.adoc[]
+include::auth/auth-refresh.adoc[]
+include::auth/auth-password-email-send.adoc[]
+include::auth/auth-password-reset.adoc[]
+
+== 사용자 API
+
+include::user/user-signup.adoc[]
+include::user/user-email-send.adoc[]
+include::user/user-profile-get.adoc[]
+include::user/user-profile-update.adoc[]
+include::user/user-withdraw.adoc[]
+
+== 마이페이지 API
+
+include::mypage/mypage-places.adoc[]
+
+== 파일 업로드 API
+
+include::storage/storage-upload.adoc[]
+
 == 장소 API
 
 include::place/place-list.adoc[]
 include::place/place-detail.adoc[]
-include::place/place-create.adoc[]
+include::place/place-search.adoc[]
 include::place/place-reviews.adoc[]
+include::place/place-create.adoc[]
+include::place/place-update.adoc[]
+include::place/place-delete.adoc[]
+include::place/place-tag-add.adoc[]
+include::place/place-like.adoc[]
+include::place/place-unlike.adoc[]
+include::place/place-review-create.adoc[]
 
 == 관리자 장소 API
 
