@@ -18,6 +18,9 @@ env:
     CLOUDFRONT_DOMAIN:     "/puppynote/prd/CLOUDFRONT_DOMAIN"
 
 phases:
+  install:
+    runtime-versions:
+      java: corretto17
   build:
     commands:
       - echo "--- Gradle 빌드 ---"
