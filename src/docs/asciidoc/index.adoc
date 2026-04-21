@@ -1,0 +1,31 @@
+= PuppyMap API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+== 장소 API
+
+include::place/place-list.adoc[]
+include::place/place-detail.adoc[]
+include::place/place-create.adoc[]
+include::place/place-reviews.adoc[]
+
+== 관리자 장소 API
+
+include::admin/admin-place-list.adoc[]
+include::admin/admin-place-approve.adoc[]
+include::admin/admin-place-reject.adoc[]
+
+== 리뷰 API
+
+include::review/review-update.adoc[]
+include::review/review-delete.adoc[]
+
+== 즐겨찾기 API
+
+include::favorite/favorite-list.adoc[]
+include::favorite/favorite-add.adoc[]
+include::favorite/favorite-remove.adoc[]
