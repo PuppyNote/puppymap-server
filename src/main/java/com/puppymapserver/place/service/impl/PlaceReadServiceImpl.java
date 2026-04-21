@@ -45,7 +45,7 @@ public class PlaceReadServiceImpl implements PlaceReadService {
     public PlaceResponse getApprovedPlace(Long placeId) {
         Place place = placeRepository.findApprovedById(placeId)
                 .orElseThrow(() -> new NotFoundException("장소를 찾을 수 없습니다."));
-        return PlaceResponse.from(place);
+        return PlaceResponse.of(place);
     }
 
     @Override
