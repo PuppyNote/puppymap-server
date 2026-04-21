@@ -389,7 +389,7 @@ class PlaceControllerDocsTest extends RestDocsSupport {
         willDoNothing().given(placeService).addTag(anyLong(), anyLong(), any());
 
         mockMvc.perform(post("/api/v1/places/{placeId}/tags", 1L)
-                        .param("tagType", TagType.TICK.name())
+                        .queryParam("tagType", TagType.TICK.name())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
