@@ -48,7 +48,7 @@ public abstract class IntegrationTestSupport {
                 .email(email)
                 .password(password)
                 .nickName("테스터")
-                .snsType(SnsType.LOCAL)
+                .snsType(SnsType.NORMAL)
                 .role(Role.USER)
                 .useYn("Y")
                 .build());
@@ -59,7 +59,7 @@ public abstract class IntegrationTestSupport {
                 .email(email)
                 .password(password)
                 .nickName("관리자")
-                .snsType(SnsType.LOCAL)
+                .snsType(SnsType.NORMAL)
                 .role(Role.ADMIN)
                 .useYn("Y")
                 .build());
