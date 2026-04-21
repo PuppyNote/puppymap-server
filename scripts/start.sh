@@ -2,7 +2,7 @@
 APP_DIR=/home/ec2-user/app
 LOG_DIR=/home/ec2-user/logs
 REGION="ap-northeast-2"
-SSM_PREFIX="/puppymap/prd"
+SSM_PREFIX="/puppynote/prd"
 
 mkdir -p $LOG_DIR
 
