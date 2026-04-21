@@ -2,16 +2,16 @@
 APP_DIR=/home/ec2-user/app
 LOG_DIR=/home/ec2-user/logs
 REGION="ap-northeast-2"
-SSM_PREFIX="/puppynote/prd"
+SSM_PREFIX="/puppymap/prd"
 
 mkdir -p $LOG_DIR
 
 # 현재 활성 포트 확인 → 비활성 포트에 배포
-ACTIVE_PORT=$(cat $APP_DIR/active_port 2>/dev/null || echo "8080")
-if [ "$ACTIVE_PORT" = "8080" ]; then
-  INACTIVE_PORT="8081"
+ACTIVE_PORT=$(cat $APP_DIR/active_port 2>/dev/null || echo "8082")
+if [ "$ACTIVE_PORT" = "8082" ]; then
+  INACTIVE_PORT="8083"
 else
-  INACTIVE_PORT="8080"
+  INACTIVE_PORT="8082"
 fi
 
 echo "활성 포트: $ACTIVE_PORT → 배포 대상 포트: $INACTIVE_PORT"
