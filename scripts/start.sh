@@ -1,6 +1,6 @@
 #!/bin/bash
-APP_DIR=/home/ec2-user/app
-LOG_DIR=/home/ec2-user/logs
+APP_DIR=/home/ec2-user/web
+LOG_DIR=/home/ec2-user/weblogs
 REGION="ap-northeast-2"
 SSM_PREFIX="/puppynote/prd"
 

@@ -2,7 +2,23 @@
   "permissions": {
     "allow": [
       "Bash(dir C:\\\\Users\\\\tkdrl\\\\Desktop\\\\PProject\\\\puppynote-server *)",
-      "Bash(dir C:\\\\Users\\\\tkdrl\\\\Desktop\\\\PProject\\\\puppymap-server *)"
+      "Bash(dir C:\\\\Users\\\\tkdrl\\\\Desktop\\\\PProject\\\\puppymap-server *)",
+      "Bash(xargs grep *)",
+      "Bash(./gradlew compileJava)",
+      "Bash(./gradlew build *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git reset *)",
+      "Bash(git commit -m 'chore: 프로젝트 기본 설정 및 테스트 환경 구성 *)",
+      "Bash(git commit -m 'feat: global 공통 모듈 추가 *)",
+      "Bash(git commit -m 'feat: JWT 인증 및 Redis 설정 추가 *)",
+      "Bash(git commit -m 'feat: User 도메인 및 Storage 추가 *)",
+      "Bash(git commit -m 'feat: Place 도메인 구현 *)",
+      "Bash(git commit -m 'feat: Review 도메인 구현 *)",
+      "Bash(git commit -m 'test: RestDocs 컨트롤러 API 문서 테스트 작성 *)",
+      "Bash(git commit -m 'docs: asciidoc API 문서 인덱스 추가 *)",
+      "Bash(git commit -m 'chore: 배포 스크립트 포트 및 SSM 경로 수정 *)",
+      "Bash(git commit *)"
     ]
   }
 }
