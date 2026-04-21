@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:~/puppymap;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:~/puppymap;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -11,7 +11,7 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 100
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.H2Dialect
         jdbc:
           exception-handling: ignore
   data:
