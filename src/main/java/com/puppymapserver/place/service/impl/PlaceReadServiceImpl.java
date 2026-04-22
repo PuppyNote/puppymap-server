@@ -88,6 +88,7 @@ public class PlaceReadServiceImpl implements PlaceReadService {
 
             SearchRequest searchRequest = SearchRequest.of(s -> s
                     .index("places")
+                    .source(src -> src.fetch(false))
                     .query(finalQuery));
 
             SearchResponse<PlaceDocument> response = elasticsearchClient.search(searchRequest, PlaceDocument.class);
