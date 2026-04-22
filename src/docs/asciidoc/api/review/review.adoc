@@ -1,0 +1,26 @@
+[[review-update]]
+=== 리뷰 수정
+
+==== HTTP Request
+
+include::{snippets}/review-update/http-request.adoc[]
+include::{snippets}/review-update/path-parameters.adoc[]
+include::{snippets}/review-update/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/review-update/http-response.adoc[]
+include::{snippets}/review-update/response-fields.adoc[]
+
+[[review-delete]]
+=== 리뷰 삭제
+
+==== HTTP Request
+
+include::{snippets}/review-delete/http-request.adoc[]
+include::{snippets}/review-delete/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/review-delete/http-response.adoc[]
+include::{snippets}/review-delete/response-fields.adoc[]

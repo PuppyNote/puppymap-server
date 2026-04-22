@@ -1,0 +1,62 @@
+[[user-signup]]
+=== 회원가입
+
+==== HTTP Request
+
+include::{snippets}/user-signup/http-request.adoc[]
+include::{snippets}/user-signup/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/user-signup/http-response.adoc[]
+include::{snippets}/user-signup/response-fields.adoc[]
+
+[[user-email-send]]
+=== 이메일 인증 전송
+
+==== HTTP Request
+
+include::{snippets}/user-email-send/http-request.adoc[]
+include::{snippets}/user-email-send/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/user-email-send/http-response.adoc[]
+include::{snippets}/user-email-send/response-fields.adoc[]
+
+[[user-profile-get]]
+=== 내 프로필 조회
+
+==== HTTP Request
+
+include::{snippets}/user-profile-get/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/user-profile-get/http-response.adoc[]
+include::{snippets}/user-profile-get/response-fields.adoc[]
+
+[[user-profile-update]]
+=== 프로필 수정
+
+==== HTTP Request
+
+include::{snippets}/user-profile-update/http-request.adoc[]
+include::{snippets}/user-profile-update/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/user-profile-update/http-response.adoc[]
+include::{snippets}/user-profile-update/response-fields.adoc[]
+
+[[user-withdraw]]
+=== 회원 탈퇴
+
+==== HTTP Request
+
+include::{snippets}/user-withdraw/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/user-withdraw/http-response.adoc[]
+include::{snippets}/user-withdraw/response-fields.adoc[]

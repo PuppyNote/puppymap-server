@@ -1,0 +1,39 @@
+[[admin-place-list]]
+=== 전체 제보 목록 조회
+
+==== HTTP Request
+
+include::{snippets}/admin-place-list/http-request.adoc[]
+include::{snippets}/admin-place-list/query-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/admin-place-list/http-response.adoc[]
+include::{snippets}/admin-place-list/response-fields.adoc[]
+
+[[admin-place-approve]]
+=== 장소 승인
+
+==== HTTP Request
+
+include::{snippets}/admin-place-approve/http-request.adoc[]
+include::{snippets}/admin-place-approve/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/admin-place-approve/http-response.adoc[]
+include::{snippets}/admin-place-approve/response-fields.adoc[]
+
+[[admin-place-reject]]
+=== 장소 거절
+
+==== HTTP Request
+
+include::{snippets}/admin-place-reject/http-request.adoc[]
+include::{snippets}/admin-place-reject/path-parameters.adoc[]
+include::{snippets}/admin-place-reject/query-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/admin-place-reject/http-response.adoc[]
+include::{snippets}/admin-place-reject/response-fields.adoc[]

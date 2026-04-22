@@ -1,0 +1,64 @@
+[[auth-login]]
+=== 일반 로그인
+
+==== HTTP Request
+
+include::{snippets}/auth-login/http-request.adoc[]
+include::{snippets}/auth-login/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/auth-login/http-response.adoc[]
+include::{snippets}/auth-login/response-fields.adoc[]
+
+[[auth-oauth-login]]
+=== OAuth 로그인
+
+==== HTTP Request
+
+include::{snippets}/auth-oauth-login/http-request.adoc[]
+include::{snippets}/auth-oauth-login/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/auth-oauth-login/http-response.adoc[]
+include::{snippets}/auth-oauth-login/response-fields.adoc[]
+
+[[auth-refresh]]
+=== 토큰 갱신
+
+==== HTTP Request
+
+include::{snippets}/auth-refresh/http-request.adoc[]
+include::{snippets}/auth-refresh/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/auth-refresh/http-response.adoc[]
+include::{snippets}/auth-refresh/response-fields.adoc[]
+
+[[auth-password-email-send]]
+=== 비밀번호 재설정 이메일 전송
+
+==== HTTP Request
+
+include::{snippets}/auth-password-email-send/http-request.adoc[]
+include::{snippets}/auth-password-email-send/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/auth-password-email-send/http-response.adoc[]
+include::{snippets}/auth-password-email-send/response-fields.adoc[]
+
+[[auth-password-reset]]
+=== 비밀번호 재설정
+
+==== HTTP Request
+
+include::{snippets}/auth-password-reset/http-request.adoc[]
+include::{snippets}/auth-password-reset/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/auth-password-reset/http-response.adoc[]
+include::{snippets}/auth-password-reset/response-fields.adoc[]
