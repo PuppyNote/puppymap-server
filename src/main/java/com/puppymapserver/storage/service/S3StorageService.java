@@ -1,6 +1,5 @@
 package com.puppymapserver.storage.service;
 
-import com.puppymapserver.storage.enums.BucketKind;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +20,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class S3StorageService {
 
+    static final String PLACE_FOLDER = "place";
+    static final String USER_PROFILE_FOLDER = "user-profile";
+
     private final S3Client s3Client;
 
     @Value("${aws.s3.bucket.name}")
@@ -29,50 +31,29 @@ public class S3StorageService {
     @Value("${aws.cloudfront.domain}")
     private String cloudFrontDomain;
 
-    /**
-     * S3에 파일 업로드 후 CloudFront URL 반환
-     *
-     * @param file       업로드할 파일
-     * @param bucketKind 폴더 종류
-     * @return 업로드된 파일의 CloudFront URL
-     */
-    public String upload(MultipartFile file, BucketKind bucketKind) {
+    public String upload(MultipartFile file, String folder) {
         validateImageFile(file);
         String imageKey = generateObjectKey(file.getOriginalFilename());
-        String objectKey = bucketKind.getFolder() + "/" + imageKey;
+        String objectKey = folder + "/" + imageKey;
         uploadToS3(file, objectKey);
         return imageKey;
     }
 
-    /**
-     * CloudFront URL 반환
-     *
-     * @param objectKey  S3 객체 키 (폴더 포함)
-     * @param bucketKind 폴더 종류
-     * @return CloudFront URL
-     */
-    public String getCloudFrontUrl(String objectKey, BucketKind bucketKind) {
+    public String getCloudFrontUrl(String objectKey, String folder) {
         if (objectKey == null || objectKey.isEmpty()) {
             return objectKey;
         }
-        // 이미 폴더 prefix가 포함된 경우 그대로 사용, 없으면 추가
-        String key = objectKey.startsWith(bucketKind.getFolder() + "/")
+        String key = objectKey.startsWith(folder + "/")
                 ? objectKey
-                : bucketKind.getFolder() + "/" + objectKey;
-        return getCloudFrontUrl(key);
+                : folder + "/" + objectKey;
+        return cloudFrontDomain + "/" + key;
     }
 
-    /**
-     * S3에서 파일 삭제
-     *
-     * @param imageKey   삭제할 이미지 키
-     * @param bucketKind 폴더 종류
-     */
-    public void deleteObject(String imageKey, BucketKind bucketKind) {
+    public void deleteObject(String imageKey, String folder) {
         if (imageKey == null || imageKey.isEmpty()) return;
-        String objectKey = imageKey.startsWith(bucketKind.getFolder() + "/")
+        String objectKey = imageKey.startsWith(folder + "/")
                 ? imageKey
-                : bucketKind.getFolder() + "/" + imageKey;
+                : folder + "/" + imageKey;
         try {
             s3Client.deleteObject(DeleteObjectRequest.builder()
                     .bucket(bucketName)
@@ -84,19 +65,9 @@ public class S3StorageService {
         }
     }
 
-    /**
-     * S3에서 파일 목록 삭제
-     *
-     * @param imageKeys  삭제할 이미지 키 목록
-     * @param bucketKind 폴더 종류
-     */
-    public void deleteObjects(List<String> imageKeys, BucketKind bucketKind) {
+    public void deleteObjects(List<String> imageKeys, String folder) {
         if (imageKeys == null || imageKeys.isEmpty()) return;
-        imageKeys.forEach(key -> deleteObject(key, bucketKind));
-    }
-
-    private String getCloudFrontUrl(String objectKey) {
-        return cloudFrontDomain + "/" + objectKey;
+        imageKeys.forEach(key -> deleteObject(key, folder));
     }
 
     private void uploadToS3(MultipartFile file, String objectKey) {
@@ -135,7 +106,6 @@ public class S3StorageService {
 
     private void validateImageFile(MultipartFile file) {
         validateFile(file);
-
         String contentType = file.getContentType();
         if (contentType != null && contentType.startsWith("video/")) {
             throw new IllegalArgumentException("동영상 파일은 업로드할 수 없습니다.");
@@ -152,23 +122,16 @@ public class S3StorageService {
     }
 
     private String getFileExtension(String filename) {
-        if (filename == null || filename.isEmpty()) {
-            return "";
-        }
+        if (filename == null || filename.isEmpty()) return "";
         int lastDotIndex = filename.lastIndexOf('.');
-        if (lastDotIndex == -1) {
-            return "";
-        }
+        if (lastDotIndex == -1) return "";
         return filename.substring(lastDotIndex).toLowerCase();
     }
 
     private String determineContentType(MultipartFile file) {
         String contentType = file.getContentType();
-        if (contentType != null && !contentType.isEmpty()) {
-            return contentType;
-        }
-        String extension = getFileExtension(file.getOriginalFilename());
-        return switch (extension) {
+        if (contentType != null && !contentType.isEmpty()) return contentType;
+        return switch (getFileExtension(file.getOriginalFilename())) {
             case ".jpg", ".jpeg" -> "image/jpeg";
             case ".png" -> "image/png";
             case ".gif" -> "image/gif";

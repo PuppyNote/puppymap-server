@@ -2,7 +2,6 @@ package com.puppymapserver.user.users.service.impl;
 
 import com.puppymapserver.global.exception.PuppyMapException;
 import com.puppymapserver.global.security.SecurityService;
-import com.puppymapserver.storage.enums.BucketKind;
 import com.puppymapserver.storage.service.S3StorageService;
 import com.puppymapserver.user.users.entity.User;
 import com.puppymapserver.user.users.repository.UserRepository;
@@ -46,7 +45,7 @@ public class UserReadServiceImpl implements UserReadService {
     public UserProfileResponse getMyProfile() {
         Long userId = securityService.getCurrentLoginUserInfo().getUserId();
         User user = findById(userId);
-        String profileUrl = s3StorageService.getCloudFrontUrl(user.getProfileUrl(), BucketKind.USER_PROFILE);
+        String profileUrl = s3StorageService.getCloudFrontUrl(user.getProfileUrl(), S3StorageService.USER_PROFILE_FOLDER);
         return UserProfileResponse.of(user, profileUrl);
     }
 }

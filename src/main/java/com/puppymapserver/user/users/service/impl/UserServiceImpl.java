@@ -3,7 +3,6 @@ package com.puppymapserver.user.users.service.impl;
 import com.puppymapserver.global.email.EmailService;
 import com.puppymapserver.global.exception.PuppyMapException;
 import com.puppymapserver.global.security.SecurityService;
-import com.puppymapserver.storage.enums.BucketKind;
 import com.puppymapserver.storage.service.S3StorageService;
 import com.puppymapserver.user.users.entity.User;
 import com.puppymapserver.user.users.repository.UserRepository;
@@ -55,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
         // 프로필 이미지가 변경된 경우 기존 이미지 S3에서 삭제
         if (oldProfileUrl != null && !Objects.equals(oldProfileUrl, request.getProfileUrl())) {
-            s3StorageService.deleteObject(oldProfileUrl, BucketKind.USER_PROFILE);
+            s3StorageService.deleteObject(oldProfileUrl, S3StorageService.USER_PROFILE_FOLDER);
         }
     }
 
