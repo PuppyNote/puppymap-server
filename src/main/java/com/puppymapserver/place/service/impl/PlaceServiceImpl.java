@@ -51,9 +51,7 @@ public class PlaceServiceImpl implements PlaceService {
     public void delete(Long placeId, Long userId) {
         Place place = placeReadService.findByIdOrThrow(placeId);
         place.validateOwner(userId);
-
-        placeElasticsearchRepository.deleteById(String.valueOf(placeId));
-        placeRepository.delete(place);
+        place.softDelete();
     }
 
     @Override

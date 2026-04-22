@@ -12,16 +12,16 @@ import java.util.Optional;
 
 public interface PlaceJpaRepository extends JpaRepository<Place, Long> {
 
-    @Query("select p from Place p where p.status = 'APPROVED'")
+    @Query("select p from Place p where p.status = 'APPROVED' and p.deletedAt is null")
     List<Place> findAllApproved();
 
-    @Query("select p from Place p where p.id = :id and p.status = 'APPROVED'")
+    @Query("select p from Place p where p.id = :id and p.status = 'APPROVED' and p.deletedAt is null")
     Optional<Place> findApprovedById(@Param("id") Long id);
 
-    @Query("select p from Place p where p.user.id = :userId order by p.createdDate desc")
+    @Query("select p from Place p where p.user.id = :userId and p.deletedAt is null order by p.createdDate desc")
     List<Place> findAllByUserId(@Param("userId") Long userId);
 
-    @Query("select p from Place p where p.status = :status order by p.createdDate desc")
+    @Query("select p from Place p where p.status = :status and p.deletedAt is null order by p.createdDate desc")
     List<Place> findAllByStatus(@Param("status") PlaceStatus status);
 
     @Modifying

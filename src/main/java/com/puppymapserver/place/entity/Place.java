@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +56,11 @@ public class Place extends BaseTimeEntity {
 
     @Column(nullable = false)
     private long likeCount = 0;
+
+    @Column(nullable = false, length = 1)
+    private String adminYn = "N";
+
+    private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlaceImage> images = new ArrayList<>();
@@ -102,11 +108,17 @@ public class Place extends BaseTimeEntity {
 
     public void approve() {
         this.status = PlaceStatus.APPROVED;
+        this.adminYn = "Y";
         this.rejectionReason = null;
     }
 
     public void reject(String reason) {
         this.status = PlaceStatus.REJECTED;
+        this.adminYn = "N";
         this.rejectionReason = reason;
+    }
+
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
     }
 }
