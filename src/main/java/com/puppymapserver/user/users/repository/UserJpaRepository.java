@@ -14,10 +14,7 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.useYn = 'Y'")
     List<User> findAll();
 
-    @Query("select distinct u from User u left join fetch u.pushes where u.useYn = 'Y'")
-    List<User> findAllWithPushes();
-
-	@Query("select u from User u where u.email = :email and u.useYn = 'Y'")
+@Query("select u from User u where u.email = :email and u.useYn = 'Y'")
 	Optional<User> findByEmail(@Param("email") String email);
 
 	@Query("select u from User u where u.email = :email and u.nickName = :nickName and u.useYn = 'Y'")

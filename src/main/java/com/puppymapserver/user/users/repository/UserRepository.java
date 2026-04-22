@@ -8,9 +8,8 @@ import com.puppymapserver.user.users.entity.User;
 public interface UserRepository {
     List<User> findAll();
 
-    List<User> findAllWithPushes();
 
-	User save(User user);
+User save(User user);
 
 	Optional<User> findByEmail(String email);
 
