@@ -29,7 +29,7 @@ public class PlaceResponse {
     private Boolean offLeashAvailable;
     private List<String> imageUrls;
     private List<TagType> activeTags;
-    private int likeCount;
+    private long likeCount;
     private LocalDateTime createdDate;
 
     public static PlaceResponse of(Place place) {
@@ -51,7 +51,7 @@ public class PlaceResponse {
                         .filter(PlaceTag::getIsActive)
                         .map(PlaceTag::getTagType)
                         .toList())
-                .likeCount(place.getLikes().size())
+                .likeCount(place.getLikeCount())
                 .createdDate(place.getCreatedDate())
                 .build();
     }
