@@ -53,8 +53,6 @@ class LoginControllerDocsTest extends RestDocsSupport {
                 LoginRequest.builder()
                         .email("test@example.com")
                         .password("password123")
-                        .deviceId("device-001")
-                        .pushKey("fcm-token-xxx")
                         .build()
         );
 
@@ -68,9 +66,7 @@ class LoginControllerDocsTest extends RestDocsSupport {
                         preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
-                                fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
-                                fieldWithPath("deviceId").type(JsonFieldType.STRING).description("디바이스 ID"),
-                                fieldWithPath("pushKey").type(JsonFieldType.STRING).description("FCM 푸시 토큰").optional()
+                                fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
                         ),
                         responseFields(
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
@@ -99,8 +95,6 @@ class LoginControllerDocsTest extends RestDocsSupport {
                 LoginOauthRequest.builder()
                         .token("kakao-access-token-xxx")
                         .snsType(SnsType.KAKAO)
-                        .deviceId("device-001")
-                        .pushKey("fcm-token-xxx")
                         .build()
         );
 
@@ -114,9 +108,7 @@ class LoginControllerDocsTest extends RestDocsSupport {
                         preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("token").type(JsonFieldType.STRING).description("SNS 액세스 토큰"),
-                                fieldWithPath("snsType").type(JsonFieldType.STRING).description("SNS 유형 (KAKAO, GOOGLE, APPLE)"),
-                                fieldWithPath("deviceId").type(JsonFieldType.STRING).description("디바이스 ID"),
-                                fieldWithPath("pushKey").type(JsonFieldType.STRING).description("FCM 푸시 토큰").optional()
+                                fieldWithPath("snsType").type(JsonFieldType.STRING).description("SNS 유형 (KAKAO, GOOGLE, APPLE)")
                         ),
                         responseFields(
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
