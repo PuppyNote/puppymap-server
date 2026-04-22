@@ -102,7 +102,7 @@ class ReviewServiceTest extends IntegrationTestSupport {
         // when / then
         assertThatThrownBy(() -> reviewService.update(updateRequest))
                 .isInstanceOf(com.puppymapserver.global.exception.PuppyMapException.class)
-                .hasMessageContaining("본인의 리뷰만 수정할 수 있습니다.");
+                .hasMessageContaining("본인의 리뷰만 수정/삭제할 수 있습니다.");
     }
 
     @DisplayName("장소에 달린 리뷰 목록을 조회할 수 있다")
