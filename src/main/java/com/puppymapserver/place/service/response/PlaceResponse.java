@@ -2,10 +2,8 @@ package com.puppymapserver.place.service.response;
 
 import com.puppymapserver.place.entity.Place;
 import com.puppymapserver.place.entity.PlaceImage;
-import com.puppymapserver.place.entity.PlaceTag;
 import com.puppymapserver.place.entity.enums.PlaceCategory;
 import com.puppymapserver.place.entity.enums.PlaceStatus;
-import com.puppymapserver.place.entity.enums.TagType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -28,7 +26,6 @@ public class PlaceResponse {
     private Boolean parkingAvailable;
     private Boolean offLeashAvailable;
     private List<String> imageUrls;
-    private List<TagType> activeTags;
     private long likeCount;
     private LocalDateTime createdDate;
 
@@ -47,10 +44,6 @@ public class PlaceResponse {
                 .parkingAvailable(place.getParkingAvailable())
                 .offLeashAvailable(place.getOffLeashAvailable())
                 .imageUrls(place.getImages().stream().map(PlaceImage::getImageUrl).toList())
-                .activeTags(place.getTags().stream()
-                        .filter(PlaceTag::getIsActive)
-                        .map(PlaceTag::getTagType)
-                        .toList())
                 .likeCount(place.getLikeCount())
                 .createdDate(place.getCreatedDate())
                 .build();

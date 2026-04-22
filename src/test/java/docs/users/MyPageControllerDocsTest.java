@@ -55,7 +55,6 @@ class MyPageControllerDocsTest extends RestDocsSupport {
                 .parkingAvailable(true)
                 .offLeashAvailable(false)
                 .imageUrls(List.of())
-                .activeTags(List.of())
                 .likeCount(0)
                 .createdDate(LocalDateTime.now())
                 .build();
@@ -87,7 +86,6 @@ class MyPageControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data[].parkingAvailable").type(JsonFieldType.BOOLEAN).description("주차 가능 여부"),
                                 fieldWithPath("data[].offLeashAvailable").type(JsonFieldType.BOOLEAN).description("오프리쉬 가능 여부"),
                                 fieldWithPath("data[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
-                                fieldWithPath("data[].activeTags").type(JsonFieldType.ARRAY).description("활성 태그 목록"),
                                 fieldWithPath("data[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),
                                 fieldWithPath("data[].createdDate").type(JsonFieldType.STRING).description("생성 일시")
                         )
