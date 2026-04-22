@@ -34,14 +34,7 @@ public class ReviewServiceImpl implements ReviewService {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
-        Review review = Review.builder()
-                .place(place)
-                .user(user)
-                .rating(request.getRating())
-                .comment(request.getComment())
-                .build();
-
-        return ReviewResponse.of(reviewJpaRepository.save(review));
+        return ReviewResponse.of(reviewJpaRepository.save(request.toEntity(place, user)));
     }
 
     @Override

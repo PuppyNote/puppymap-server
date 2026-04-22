@@ -5,7 +5,6 @@ import com.puppymapserver.global.exception.PuppyMapException;
 import com.puppymapserver.place.elasticsearch.PlaceDocument;
 import com.puppymapserver.place.elasticsearch.PlaceElasticsearchRepository;
 import com.puppymapserver.place.entity.Place;
-import com.puppymapserver.place.entity.PlaceImage;
 import com.puppymapserver.place.entity.PlaceTag;
 import com.puppymapserver.place.entity.enums.TagType;
 import com.puppymapserver.place.repository.PlaceRepository;
@@ -36,29 +35,7 @@ public class PlaceServiceImpl implements PlaceService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
-        Place place = Place.builder()
-                .user(user)
-                .title(request.getTitle())
-                .content(request.getContent())
-                .latitude(request.getLatitude())
-                .longitude(request.getLongitude())
-                .category(request.getCategory())
-                .largeDogAvailable(request.getLargeDogAvailable())
-                .parkingAvailable(request.getParkingAvailable())
-                .offLeashAvailable(request.getOffLeashAvailable())
-                .build();
-
-        if (request.getImageUrls() != null) {
-            for (int i = 0; i < request.getImageUrls().size(); i++) {
-                place.getImages().add(PlaceImage.builder()
-                        .place(place)
-                        .imageUrl(request.getImageUrls().get(i))
-                        .sortOrder(i)
-                        .build());
-            }
-        }
-
-        Place saved = placeRepository.save(place);
+        Place saved = placeRepository.save(request.toEntity(user));
         return PlaceResponse.of(saved);
     }
 

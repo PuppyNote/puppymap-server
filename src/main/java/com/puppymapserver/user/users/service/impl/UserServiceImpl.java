@@ -6,8 +6,6 @@ import com.puppymapserver.global.security.SecurityService;
 import com.puppymapserver.storage.enums.BucketKind;
 import com.puppymapserver.storage.service.S3StorageService;
 import com.puppymapserver.user.users.entity.User;
-import com.puppymapserver.user.users.entity.enums.Role;
-import com.puppymapserver.user.users.entity.enums.SnsType;
 import com.puppymapserver.user.users.repository.UserRepository;
 import com.puppymapserver.user.users.service.UserReadService;
 import com.puppymapserver.user.users.service.UserService;
@@ -37,15 +35,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public SignUpResponse signUp(SignUpServiceRequest request) {
         checkExistEmail(request.getEmail());
-        User user = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .nickName(request.getNickName())
-                .snsType(SnsType.NORMAL)
-                .role(Role.USER)
-                .useYn("Y")
-                .build();
-        return SignUpResponse.of(userRepository.save(user));
+        return SignUpResponse.of(userRepository.save(request.toEntity(passwordEncoder.encode(request.getPassword()))));
     }
 
     @Override

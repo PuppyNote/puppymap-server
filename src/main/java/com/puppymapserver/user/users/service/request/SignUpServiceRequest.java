@@ -1,5 +1,8 @@
 package com.puppymapserver.user.users.service.request;
 
+import com.puppymapserver.user.users.entity.User;
+import com.puppymapserver.user.users.entity.enums.Role;
+import com.puppymapserver.user.users.entity.enums.SnsType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,5 +17,16 @@ public class SignUpServiceRequest {
         this.email = email;
         this.password = password;
         this.nickName = nickName;
+    }
+
+    public User toEntity(String encodedPassword) {
+        return User.builder()
+                .email(email)
+                .password(encodedPassword)
+                .nickName(nickName)
+                .snsType(SnsType.NORMAL)
+                .role(Role.USER)
+                .useYn("Y")
+                .build();
     }
 }
