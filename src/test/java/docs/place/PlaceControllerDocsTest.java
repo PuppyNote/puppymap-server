@@ -71,6 +71,51 @@ class PlaceControllerDocsTest extends RestDocsSupport {
                 .build();
     }
 
+    @DisplayName("근처 인기 장소 Top20 조회 API")
+    @Test
+    void 근처_인기_장소_Top20_조회() throws Exception {
+        given(placeReadService.getTop20NearbyByLikeCount(37.5665, 126.9780, 5.0))
+                .willReturn(List.of(samplePlace(PlaceStatus.APPROVED)));
+
+        mockMvc.perform(get("/api/v1/places/nearby/top")
+                        .param("lat", "37.5665")
+                        .param("lng", "126.9780")
+                        .param("radiusKm", "5.0")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("place-nearby-top",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("lat").description("중심 위도"),
+                                parameterWithName("lng").description("중심 경도"),
+                                parameterWithName("radiusKm").description("반경 (km, 기본값: 5.0)").optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                fieldWithPath("httpStatus").type(JsonFieldType.STRING).description("HTTP 상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("장소 ID"),
+                                fieldWithPath("data[].userId").type(JsonFieldType.NUMBER).description("제보자 ID"),
+                                fieldWithPath("data[].userNickName").type(JsonFieldType.STRING).description("제보자 닉네임"),
+                                fieldWithPath("data[].title").type(JsonFieldType.STRING).description("장소 제목"),
+                                fieldWithPath("data[].content").type(JsonFieldType.STRING).description("장소 설명"),
+                                fieldWithPath("data[].latitude").type(JsonFieldType.NUMBER).description("위도"),
+                                fieldWithPath("data[].longitude").type(JsonFieldType.NUMBER).description("경도"),
+                                fieldWithPath("data[].category").type(JsonFieldType.STRING).description("카테고리"),
+                                fieldWithPath("data[].status").type(JsonFieldType.STRING).description("승인 상태"),
+                                fieldWithPath("data[].largeDogAvailable").type(JsonFieldType.BOOLEAN).description("대형견 가능 여부"),
+                                fieldWithPath("data[].parkingAvailable").type(JsonFieldType.BOOLEAN).description("주차 가능 여부"),
+                                fieldWithPath("data[].offLeashAvailable").type(JsonFieldType.BOOLEAN).description("오프리쉬 가능 여부"),
+                                fieldWithPath("data[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
+                                fieldWithPath("data[].activeTags").type(JsonFieldType.ARRAY).description("활성 태그 목록"),
+                                fieldWithPath("data[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),
+                                fieldWithPath("data[].createdDate").type(JsonFieldType.STRING).description("생성 일시")
+                        )
+                ));
+    }
+
     @DisplayName("승인된 장소 목록 조회 API")
     @Test
     void 장소_목록_조회() throws Exception {

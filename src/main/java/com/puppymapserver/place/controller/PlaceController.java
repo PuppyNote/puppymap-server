@@ -49,6 +49,15 @@ public class PlaceController {
         return ApiResponse.of(HttpStatus.OK, "장소 조회 성공", placeReadService.getApprovedPlace(placeId));
     }
 
+    @GetMapping("/nearby/top")
+    public ApiResponse<List<PlaceResponse>> getTop20Nearby(
+            @RequestParam double lat,
+            @RequestParam double lng,
+            @RequestParam(defaultValue = "5.0") double radiusKm) {
+        return ApiResponse.of(HttpStatus.OK, "근처 인기 장소 조회 성공",
+                placeReadService.getTop20NearbyByLikeCount(lat, lng, radiusKm));
+    }
+
     @GetMapping("/search")
     public ApiResponse<List<PlaceResponse>> search(@Validated @ModelAttribute PlaceSearchRequest request) {
         return ApiResponse.of(HttpStatus.OK, "검색 성공",
@@ -61,7 +70,6 @@ public class PlaceController {
     }
 
     // User (로그인 필수)
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<PlaceResponse> create(@Valid @RequestBody PlaceCreateRequest request) {

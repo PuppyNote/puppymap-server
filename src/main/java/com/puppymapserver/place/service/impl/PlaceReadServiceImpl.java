@@ -107,6 +107,13 @@ public class PlaceReadServiceImpl implements PlaceReadService {
     }
 
     @Override
+    public List<PlaceResponse> getTop20NearbyByLikeCount(double lat, double lng, double radiusKm) {
+        return placeRepository.findTop20NearbyOrderByLikeCount(lat, lng, radiusKm).stream()
+                .map(PlaceResponse::of)
+                .toList();
+    }
+
+    @Override
     public List<PlaceResponse> getMyPlaces(Long userId) {
         return placeRepository.findAllByUserId(userId).stream()
                 .map(PlaceResponse::of)

@@ -13,5 +13,6 @@ public interface PlaceReadService {
     List<PlaceResponse> getApprovedPlaces(PlaceFilterServiceRequest request);
     PlaceResponse getApprovedPlace(Long placeId);
     List<PlaceResponse> searchPlaces(PlaceSearchServiceRequest request);
+    List<PlaceResponse> getTop20NearbyByLikeCount(double lat, double lng, double radiusKm);
     List<PlaceResponse> getMyPlaces(Long userId);
 }

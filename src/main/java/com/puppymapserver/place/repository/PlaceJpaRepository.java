@@ -24,6 +24,23 @@ public interface PlaceJpaRepository extends JpaRepository<Place, Long> {
     @Query("select p from Place p where p.status = :status and p.deletedAt is null order by p.createdDate desc")
     List<Place> findAllByStatus(@Param("status") PlaceStatus status);
 
+    @Query(value = """
+            SELECT * FROM places p
+            WHERE p.status = 'APPROVED'
+              AND p.deleted_at IS NULL
+              AND (6371 * acos(
+                    cos(radians(:lat)) * cos(radians(p.latitude))
+                    * cos(radians(p.longitude) - radians(:lng))
+                    + sin(radians(:lat)) * sin(radians(p.latitude))
+                  )) <= :radiusKm
+            ORDER BY p.like_count DESC
+            LIMIT 20
+            """, nativeQuery = true)
+    List<Place> findTop20NearbyOrderByLikeCount(
+            @Param("lat") double lat,
+            @Param("lng") double lng,
+            @Param("radiusKm") double radiusKm);
+
     @Modifying
     @Query("UPDATE Place p SET p.likeCount = (SELECT COUNT(pl) FROM PlaceLike pl WHERE pl.placeId = p.id) WHERE p.id = :placeId")
     void updateLikeCount(@Param("placeId") Long placeId);
