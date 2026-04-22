@@ -1,7 +1,6 @@
 package docs.storage;
 
 import com.puppymapserver.storage.controller.StorageController;
-import com.puppymapserver.storage.enums.BucketKind;
 import com.puppymapserver.storage.service.S3StorageService;
 import docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
@@ -33,14 +32,14 @@ class StorageControllerDocsTest extends RestDocsSupport {
     @DisplayName("파일 업로드 API")
     @Test
     void 파일_업로드() throws Exception {
-        given(s3StorageService.upload(any(), any()))
+        given(s3StorageService.upload(any()))
                 .willReturn("https://s3.example.com/puppy-walk/image.jpg");
 
         MockMultipartFile file = new MockMultipartFile(
                 "file", "image.jpg", MediaType.IMAGE_JPEG_VALUE, "image-data".getBytes()
         );
 
-        mockMvc.perform(multipart("/api/v1/storage/{bucketKind}", BucketKind.WALK_PHOTO)
+        mockMvc.perform(multipart("/api/v1/storage")
                         .file(file))
                 .andDo(print())
                 .andExpect(status().isOk())

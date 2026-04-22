@@ -18,6 +18,6 @@ public class StorageController {
 
     @PostMapping
     public ApiResponse<String> upload(@RequestParam("file") MultipartFile file) {
-        return ApiResponse.ok(s3StorageService.upload(file, S3StorageService.PLACE_FOLDER));
+        return ApiResponse.ok(s3StorageService.upload(file));
     }
 }

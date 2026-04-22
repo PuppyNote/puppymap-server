@@ -31,10 +31,10 @@ public class S3StorageService {
     @Value("${aws.cloudfront.domain}")
     private String cloudFrontDomain;
 
-    public String upload(MultipartFile file, String folder) {
+    public String upload(MultipartFile file) {
         validateImageFile(file);
         String imageKey = generateObjectKey(file.getOriginalFilename());
-        String objectKey = folder + "/" + imageKey;
+        String objectKey = "place/" + imageKey;
         uploadToS3(file, objectKey);
         return imageKey;
     }
