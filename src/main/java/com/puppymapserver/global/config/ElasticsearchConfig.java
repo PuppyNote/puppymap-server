@@ -1,5 +1,9 @@
 package com.puppymapserver.global.config;
 
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -33,5 +37,13 @@ public class ElasticsearchConfig extends ElasticsearchConfiguration {
                 .withConnectTimeout(Duration.ofSeconds(3))
                 .withSocketTimeout(Duration.ofSeconds(30))
                 .build();
+    }
+
+    @Override
+    public JacksonJsonpMapper jsonpMapper() {
+        ObjectMapper mapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return new JacksonJsonpMapper(mapper);
     }
 }
