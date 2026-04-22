@@ -1,5 +1,6 @@
 package com.puppymapserver.place.elasticsearch;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import java.time.LocalDateTime;
 
 @Document(indexName = "places")
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @NoArgsConstructor
 public class PlaceDocument {
