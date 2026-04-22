@@ -63,7 +63,7 @@ aws:
   s3:
     region: ap-northeast-2
     bucket:
-      name: puppymap-dev
+      name: puppynote-dev
   cloudfront:
     domain: ${CLOUDFRONT_DOMAIN}
 
