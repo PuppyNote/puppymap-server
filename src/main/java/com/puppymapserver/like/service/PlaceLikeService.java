@@ -1,6 +1,7 @@
 package com.puppymapserver.like.service;
 
+import com.puppymapserver.like.service.response.PlaceLikeToggleResponse;
+
 public interface PlaceLikeService {
-    void like(Long placeId, Long userId);
-    void unlike(Long placeId, Long userId);
+    PlaceLikeToggleResponse toggleLike(Long placeId);
 }

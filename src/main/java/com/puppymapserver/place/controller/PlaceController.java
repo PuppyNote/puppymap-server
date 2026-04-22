@@ -4,6 +4,7 @@ import com.puppymapserver.global.ApiResponse;
 import com.puppymapserver.global.security.SecurityService;
 import com.puppymapserver.jwt.dto.LoginUserInfo;
 import com.puppymapserver.like.service.PlaceLikeService;
+import com.puppymapserver.like.service.response.PlaceLikeToggleResponse;
 import com.puppymapserver.place.controller.request.PlaceCreateRequest;
 import com.puppymapserver.place.controller.request.PlaceFilterRequest;
 import com.puppymapserver.place.controller.request.PlaceSearchRequest;
@@ -93,18 +94,8 @@ public class PlaceController {
     }
 
     @PostMapping("/{placeId}/likes")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<Void> like(@PathVariable Long placeId) {
-        LoginUserInfo userInfo = securityService.getCurrentLoginUserInfo();
-        placeLikeService.like(placeId, userInfo.getUserId());
-        return ApiResponse.of(HttpStatus.CREATED, "좋아요 성공", null);
-    }
-
-    @DeleteMapping("/{placeId}/likes")
-    public ApiResponse<Void> unlike(@PathVariable Long placeId) {
-        LoginUserInfo userInfo = securityService.getCurrentLoginUserInfo();
-        placeLikeService.unlike(placeId, userInfo.getUserId());
-        return ApiResponse.of(HttpStatus.OK, "좋아요 취소 성공", null);
+    public ApiResponse<PlaceLikeToggleResponse> toggleLike(@PathVariable Long placeId) {
+        return ApiResponse.of(HttpStatus.OK, "좋아요 토글 성공", placeLikeService.toggleLike(placeId));
     }
 
     @PostMapping("/{placeId}/reviews")

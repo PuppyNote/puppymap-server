@@ -1,35 +1,33 @@
 package com.puppymapserver.like.entity;
 
-import com.puppymapserver.place.entity.Place;
-import com.puppymapserver.user.users.entity.User;
+import com.puppymapserver.global.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "place_likes",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"place_id", "user_id"}))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PlaceLike {
+@Table(name = "place_likes", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"place_id", "user_id"})
+})
+public class PlaceLike extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id")
-    private Place place;
+    @Column(name = "place_id", nullable = false)
+    private Long placeId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    @Builder
-    private PlaceLike(Place place, User user) {
-        this.place = place;
-        this.user = user;
+    public static PlaceLike of(Long placeId, Long userId) {
+        PlaceLike like = new PlaceLike();
+        like.placeId = placeId;
+        like.userId = userId;
+        return like;
     }
 }

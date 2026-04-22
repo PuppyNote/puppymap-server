@@ -1,43 +1,51 @@
 package com.puppymapserver.like.service.impl;
 
-import com.puppymapserver.global.exception.NotFoundException;
-import com.puppymapserver.global.exception.PuppyMapException;
-import com.puppymapserver.like.entity.PlaceLike;
+import com.puppymapserver.global.security.SecurityService;
 import com.puppymapserver.like.repository.PlaceLikeJpaRepository;
 import com.puppymapserver.like.service.PlaceLikeService;
-import com.puppymapserver.place.entity.Place;
+import com.puppymapserver.like.service.response.PlaceLikeToggleResponse;
 import com.puppymapserver.place.service.PlaceReadService;
-import com.puppymapserver.user.users.entity.User;
-import com.puppymapserver.user.users.service.UserReadService;
-import jakarta.transaction.Transactional;
+import com.puppymapserver.redis.service.PlaceLikeRedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PlaceLikeServiceImpl implements PlaceLikeService {
 
     private final PlaceLikeJpaRepository placeLikeJpaRepository;
     private final PlaceReadService placeReadService;
-    private final UserReadService userReadService;
+    private final PlaceLikeRedisService placeLikeRedisService;
+    private final SecurityService securityService;
 
     @Override
-    public void like(Long placeId, Long userId) {
-        if (placeLikeJpaRepository.findByPlaceIdAndUserId(placeId, userId).isPresent()) {
-            throw new PuppyMapException("이미 좋아요를 누른 장소입니다.");
-        }
+    @Transactional
+    public PlaceLikeToggleResponse toggleLike(Long placeId) {
+        placeReadService.findApprovedByIdOrThrow(placeId);
 
-        Place place = placeReadService.findApprovedByIdOrThrow(placeId);
-        User user = userReadService.findById(userId);
+        Long userId = securityService.getCurrentLoginUserInfo().getUserId();
 
-        placeLikeJpaRepository.save(PlaceLike.builder().place(place).user(user).build());
+        initializeCacheIfAbsent(placeId, userId);
+
+        List<Long> result = placeLikeRedisService.toggle(userId, placeId);
+        boolean liked = result.get(0) == 1L;
+        long likeCount = result.get(1);
+        return PlaceLikeToggleResponse.of(liked, likeCount);
     }
 
-    @Override
-    public void unlike(Long placeId, Long userId) {
-        PlaceLike like = placeLikeJpaRepository.findByPlaceIdAndUserId(placeId, userId)
-                .orElseThrow(() -> new NotFoundException("좋아요를 찾을 수 없습니다."));
-        placeLikeJpaRepository.delete(like);
+    private void initializeCacheIfAbsent(Long placeId, Long userId) {
+        if (!placeLikeRedisService.existsCountCache(placeId)) {
+            long count = placeLikeJpaRepository.countByPlaceId(placeId);
+            placeLikeRedisService.setCountCache(placeId, count);
+        }
+
+        if (!placeLikeRedisService.existsLikedCache(userId, placeId)) {
+            boolean liked = placeLikeJpaRepository.findByPlaceIdAndUserId(placeId, userId).isPresent();
+            placeLikeRedisService.setLikedCache(userId, placeId, liked);
+        }
     }
 }
