@@ -114,7 +114,7 @@ class PlaceServiceTest extends IntegrationTestSupport {
         // when / then
         assertThatThrownBy(() -> placeService.update(request))
                 .isInstanceOf(com.puppymapserver.global.exception.PuppyMapException.class)
-                .hasMessageContaining("본인의 제보만 수정할 수 있습니다.");
+                .hasMessageContaining("본인의 제보만 수정/삭제할 수 있습니다.");
     }
 
     @DisplayName("장소 삭제 시 DB에서 제거된다")
