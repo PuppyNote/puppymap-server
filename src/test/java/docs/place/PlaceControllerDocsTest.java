@@ -3,6 +3,7 @@ package docs.place;
 import com.puppymapserver.global.security.SecurityService;
 import com.puppymapserver.jwt.dto.LoginUserInfo;
 import com.puppymapserver.like.service.PlaceLikeService;
+import com.puppymapserver.like.service.response.PlaceLikeToggleResponse;
 import com.puppymapserver.place.controller.PlaceController;
 import com.puppymapserver.place.entity.enums.PlaceCategory;
 import com.puppymapserver.place.entity.enums.PlaceStatus;
@@ -411,42 +412,18 @@ class PlaceControllerDocsTest extends RestDocsSupport {
                 ));
     }
 
-    @DisplayName("좋아요 API")
+    @DisplayName("좋아요 토글 API")
     @Test
-    void 좋아요() throws Exception {
+    void 좋아요_토글() throws Exception {
         given(securityService.getCurrentLoginUserInfo()).willReturn(LoginUserInfo.of(1L, "USER"));
-        willDoNothing().given(placeLikeService).like(anyLong(), anyLong());
+        given(placeLikeService.toggleLike(anyLong()))
+                .willReturn(PlaceLikeToggleResponse.of(true, 1L));
 
         mockMvc.perform(post("/api/v1/places/{placeId}/likes", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isCreated())
-                .andDo(document("place-like",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        pathParameters(
-                                parameterWithName("placeId").description("장소 ID")
-                        ),
-                        responseFields(
-                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("httpStatus").type(JsonFieldType.STRING).description("HTTP 상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL).description("데이터 없음")
-                        )
-                ));
-    }
-
-    @DisplayName("좋아요 취소 API")
-    @Test
-    void 좋아요_취소() throws Exception {
-        given(securityService.getCurrentLoginUserInfo()).willReturn(LoginUserInfo.of(1L, "USER"));
-        willDoNothing().given(placeLikeService).unlike(anyLong(), anyLong());
-
-        mockMvc.perform(delete("/api/v1/places/{placeId}/likes", 1L)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("place-unlike",
+                .andDo(document("place-like-toggle",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         pathParameters(
@@ -456,7 +433,8 @@ class PlaceControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                 fieldWithPath("httpStatus").type(JsonFieldType.STRING).description("HTTP 상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL).description("데이터 없음")
+                                fieldWithPath("data.liked").type(JsonFieldType.BOOLEAN).description("좋아요 상태 (true=좋아요, false=취소)"),
+                                fieldWithPath("data.likeCount").type(JsonFieldType.NUMBER).description("현재 좋아요 수")
                         )
                 ));
     }
