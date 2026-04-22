@@ -13,6 +13,8 @@ import com.puppymapserver.place.entity.enums.PlaceCategory;
 import com.puppymapserver.place.entity.enums.PlaceStatus;
 import com.puppymapserver.place.repository.PlaceRepository;
 import com.puppymapserver.place.service.PlaceReadService;
+import com.puppymapserver.place.service.request.PlaceFilterServiceRequest;
+import com.puppymapserver.place.service.request.PlaceSearchServiceRequest;
 import com.puppymapserver.place.service.response.PlaceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,12 +33,12 @@ public class PlaceReadServiceImpl implements PlaceReadService {
     private final ElasticsearchClient elasticsearchClient;
 
     @Override
-    public List<PlaceResponse> getApprovedPlaces(String category, Boolean largeDog, Boolean parking, Boolean offLeash) {
+    public List<PlaceResponse> getApprovedPlaces(PlaceFilterServiceRequest request) {
         return placeRepository.findAllApproved().stream()
-                .filter(p -> category == null || p.getCategory() == PlaceCategory.valueOf(category))
-                .filter(p -> largeDog == null || largeDog.equals(p.getLargeDogAvailable()))
-                .filter(p -> parking == null || parking.equals(p.getParkingAvailable()))
-                .filter(p -> offLeash == null || offLeash.equals(p.getOffLeashAvailable()))
+                .filter(p -> request.getCategory() == null || p.getCategory() == PlaceCategory.valueOf(request.getCategory()))
+                .filter(p -> request.getLargeDog() == null || request.getLargeDog().equals(p.getLargeDogAvailable()))
+                .filter(p -> request.getParking() == null || request.getParking().equals(p.getParkingAvailable()))
+                .filter(p -> request.getOffLeash() == null || request.getOffLeash().equals(p.getOffLeashAvailable()))
                 .map(PlaceResponse::of)
                 .toList();
     }
@@ -49,21 +51,21 @@ public class PlaceReadServiceImpl implements PlaceReadService {
     }
 
     @Override
-    public List<PlaceResponse> searchPlaces(String keyword, Double lat, Double lng, Double radiusKm) {
+    public List<PlaceResponse> searchPlaces(PlaceSearchServiceRequest request) {
         try {
             List<Query> queries = new ArrayList<>();
 
-            if (keyword != null && !keyword.isBlank()) {
+            if (request.getKeyword() != null && !request.getKeyword().isBlank()) {
                 queries.add(Query.of(q -> q.multiMatch(m -> m
-                        .query(keyword)
+                        .query(request.getKeyword())
                         .fields("title", "content"))));
             }
 
-            if (lat != null && lng != null && radiusKm != null) {
-                String distance = radiusKm + "km";
+            if (request.getLat() != null && request.getLng() != null && request.getRadiusKm() != null) {
+                String distance = request.getRadiusKm() + "km";
                 queries.add(Query.of(q -> q.geoDistance(g -> g
                         .field("location")
-                        .location(l -> l.latlon(ll -> ll.lat(lat).lon(lng)))
+                        .location(l -> l.latlon(ll -> ll.lat(request.getLat()).lon(request.getLng())))
                         .distance(distance))));
             }
 

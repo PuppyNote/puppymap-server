@@ -5,6 +5,8 @@ import com.puppymapserver.global.security.SecurityService;
 import com.puppymapserver.jwt.dto.LoginUserInfo;
 import com.puppymapserver.like.service.PlaceLikeService;
 import com.puppymapserver.place.controller.request.PlaceCreateRequest;
+import com.puppymapserver.place.controller.request.PlaceFilterRequest;
+import com.puppymapserver.place.controller.request.PlaceSearchRequest;
 import com.puppymapserver.place.controller.request.PlaceUpdateRequest;
 import com.puppymapserver.place.controller.request.ReviewRequest;
 import com.puppymapserver.place.entity.enums.TagType;
@@ -35,13 +37,9 @@ public class PlaceController {
     // Public
 
     @GetMapping
-    public ApiResponse<List<PlaceResponse>> getPlaces(
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) Boolean largeDog,
-            @RequestParam(required = false) Boolean parking,
-            @RequestParam(required = false) Boolean offLeash) {
+    public ApiResponse<List<PlaceResponse>> getPlaces(@ModelAttribute PlaceFilterRequest request) {
         return ApiResponse.of(HttpStatus.OK, "장소 목록 조회 성공",
-                placeReadService.getApprovedPlaces(category, largeDog, parking, offLeash));
+                placeReadService.getApprovedPlaces(request.toServiceRequest()));
     }
 
     @GetMapping("/{placeId}")
@@ -50,13 +48,9 @@ public class PlaceController {
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<PlaceResponse>> search(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Double lat,
-            @RequestParam(required = false) Double lng,
-            @RequestParam(required = false) Double radius) {
+    public ApiResponse<List<PlaceResponse>> search(@ModelAttribute PlaceSearchRequest request) {
         return ApiResponse.of(HttpStatus.OK, "검색 성공",
-                placeReadService.searchPlaces(keyword, lat, lng, radius));
+                placeReadService.searchPlaces(request.toServiceRequest()));
     }
 
     @GetMapping("/{placeId}/reviews")
