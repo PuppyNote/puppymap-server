@@ -2,6 +2,7 @@ package com.puppymapserver.batch;
 
 import com.puppymapserver.like.entity.PlaceLikeRedisKey;
 import com.puppymapserver.like.repository.PlaceLikeJpaRepository;
+import com.puppymapserver.place.repository.PlaceRepository;
 import com.puppymapserver.redis.service.PlaceLikeRedisService;
 import com.puppymapserver.redis.service.RedisService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.Set;
 public class PlaceLikeSyncBatch {
 
     private final PlaceLikeJpaRepository placeLikeJpaRepository;
+    private final PlaceRepository placeRepository;
     private final PlaceLikeRedisService placeLikeRedisService;
     private final RedisService redisService;
 
@@ -69,6 +71,8 @@ public class PlaceLikeSyncBatch {
         if (!toDelete.isEmpty()) {
             placeLikeJpaRepository.deleteByPlaceIdAndUserIdIn(placeId, toDelete);
         }
+
+        placeRepository.updateLikeCount(placeId);
 
         log.info("[좋아요 배치 동기화] placeId={} insert={} delete={}", placeId, toInsert.size(), toDelete.size());
     }

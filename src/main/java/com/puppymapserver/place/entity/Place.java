@@ -3,7 +3,6 @@ package com.puppymapserver.place.entity;
 import com.puppymapserver.favorite.entity.Favorite;
 import com.puppymapserver.global.BaseTimeEntity;
 import com.puppymapserver.global.exception.PuppyMapException;
-import com.puppymapserver.like.entity.PlaceLike;
 import com.puppymapserver.place.entity.enums.PlaceCategory;
 import com.puppymapserver.place.entity.enums.PlaceStatus;
 import com.puppymapserver.review.entity.Review;
@@ -54,6 +53,9 @@ public class Place extends BaseTimeEntity {
 
     private Boolean offLeashAvailable;
 
+    @Column(nullable = false)
+    private long likeCount = 0;
+
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlaceImage> images = new ArrayList<>();
 
@@ -62,9 +64,6 @@ public class Place extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
-
-    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlaceLike> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Favorite> favorites = new ArrayList<>();

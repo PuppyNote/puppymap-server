@@ -14,4 +14,5 @@ public interface PlaceRepository {
     List<Place> findAllByUserId(Long userId);
     List<Place> findAllByStatus(PlaceStatus status);
     void delete(Place place);
+    void updateLikeCount(Long placeId);
 }

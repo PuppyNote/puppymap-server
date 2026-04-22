@@ -50,4 +50,9 @@ public class PlaceRepositoryImpl implements PlaceRepository {
     public void delete(Place place) {
         placeJpaRepository.delete(place);
     }
+
+    @Override
+    public void updateLikeCount(Long placeId) {
+        placeJpaRepository.updateLikeCount(placeId);
+    }
 }
