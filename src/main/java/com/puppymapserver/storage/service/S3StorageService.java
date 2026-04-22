@@ -21,7 +21,6 @@ import java.util.UUID;
 public class S3StorageService {
 
     static final String PLACE_FOLDER = "place";
-    static final String USER_PROFILE_FOLDER = "user-profile";
 
     private final S3Client s3Client;
 
@@ -34,7 +33,7 @@ public class S3StorageService {
     public String upload(MultipartFile file) {
         validateImageFile(file);
         String imageKey = generateObjectKey(file.getOriginalFilename());
-        String objectKey = "place/" + imageKey;
+        String objectKey = PLACE_FOLDER + "/" + imageKey;
         uploadToS3(file, objectKey);
         return imageKey;
     }
