@@ -46,6 +46,7 @@ class LoginControllerDocsTest extends RestDocsSupport {
                         .email("test@example.com")
                         .accessToken("eyJhbGciOiJIUzI1NiJ9.access")
                         .refreshToken("eyJhbGciOiJIUzI1NiJ9.refresh")
+                        .role(com.puppymapserver.user.users.entity.enums.Role.USER)
                         .build()
         );
 
@@ -75,7 +76,7 @@ class LoginControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),
                                 fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("액세스 토큰"),
                                 fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("리프레시 토큰"),
-                                fieldWithPath("data.settingStatus").type(JsonFieldType.NULL).description("설정 상태").optional()
+                                fieldWithPath("data.role").type(JsonFieldType.STRING).description("사용자 권한 (USER, ADMIN)")
                         )
                 ));
     }
@@ -88,6 +89,7 @@ class LoginControllerDocsTest extends RestDocsSupport {
                         .email("test@example.com")
                         .accessToken("eyJhbGciOiJIUzI1NiJ9.access")
                         .refreshToken("eyJhbGciOiJIUzI1NiJ9.refresh")
+                        .role(com.puppymapserver.user.users.entity.enums.Role.USER)
                         .build()
         );
 
@@ -117,7 +119,7 @@ class LoginControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),
                                 fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("액세스 토큰"),
                                 fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("리프레시 토큰"),
-                                fieldWithPath("data.settingStatus").type(JsonFieldType.NULL).description("설정 상태").optional()
+                                fieldWithPath("data.role").type(JsonFieldType.STRING).description("사용자 권한 (USER, ADMIN)")
                         )
                 ));
     }

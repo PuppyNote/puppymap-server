@@ -16,7 +16,8 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -46,9 +47,6 @@ class StorageControllerDocsTest extends RestDocsSupport {
                 .andDo(document("storage-upload",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        pathParameters(
-                                parameterWithName("bucketKind").description("버킷 유형 (PUPPY_PROFILE, WALK_PHOTO, PET_ITEM_PHOTO, USER_PROFILE, COMMUNITY_POST)")
-                        ),
                         requestParts(
                                 partWithName("file").description("업로드할 파일")
                         ),

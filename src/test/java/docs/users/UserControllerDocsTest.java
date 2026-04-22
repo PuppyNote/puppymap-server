@@ -27,11 +27,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerDocsTest extends RestDocsSupport {
 
     private final UserService userService = mock(UserService.class);
-    private final UserReadService userReadService = mock(UserReadService.class);
 
     @Override
     protected Object initController() {
-        return new UserController(userService, userReadService);
+        return new UserController(userService);
     }
 
     @DisplayName("회원가입 API")
@@ -102,69 +101,6 @@ class UserControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("httpStatus").type(JsonFieldType.STRING).description("HTTP 상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
                                 fieldWithPath("data").type(JsonFieldType.STRING).description("전송 결과 메시지")
-                        )
-                ));
-    }
-
-    @DisplayName("내 프로필 조회 API")
-    @Test
-    void 내_프로필_조회() throws Exception {
-        given(userReadService.getMyProfile()).willReturn(
-                UserProfileResponse.of(
-                        com.puppymapserver.user.users.entity.User.builder()
-                                .email("test@example.com")
-                                .nickName("테스터")
-                                .build(),
-                        "https://s3.example.com/profile.jpg"
-                )
-        );
-
-        mockMvc.perform(get("/api/v1/user/profile")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("user-profile-get",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("httpStatus").type(JsonFieldType.STRING).description("HTTP 상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data.userId").type(JsonFieldType.NULL).description("사용자 ID"),
-                                fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),
-                                fieldWithPath("data.nickName").type(JsonFieldType.STRING).description("닉네임"),
-                                fieldWithPath("data.profileUrl").type(JsonFieldType.STRING).description("프로필 이미지 URL")
-                        )
-                ));
-    }
-
-    @DisplayName("프로필 수정 API")
-    @Test
-    void 프로필_수정() throws Exception {
-        String requestBody = objectMapper.writeValueAsString(
-                UserProfileUpdateRequest.builder()
-                        .nickName("새닉네임")
-                        .profileUrl("https://s3.example.com/new-profile.jpg")
-                        .build()
-        );
-
-        mockMvc.perform(patch("/api/v1/user/profile")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("user-profile-update",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("nickName").type(JsonFieldType.STRING).description("닉네임"),
-                                fieldWithPath("profileUrl").type(JsonFieldType.STRING).description("프로필 이미지 URL").optional()
-                        ),
-                        responseFields(
-                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("httpStatus").type(JsonFieldType.STRING).description("HTTP 상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터").optional()
                         )
                 ));
     }

@@ -117,7 +117,7 @@ class PlaceServiceTest extends IntegrationTestSupport {
                 .hasMessageContaining("본인의 제보만 수정/삭제할 수 있습니다.");
     }
 
-    @DisplayName("장소 삭제 시 DB에서 제거된다")
+    @DisplayName("장소 삭제 시 deletedAt이 설정된다")
     @Test
     void 본인_장소_삭제_시_DB에서_제거된다() {
         // given
@@ -128,7 +128,8 @@ class PlaceServiceTest extends IntegrationTestSupport {
         // when
         placeService.delete(placeId, user.getId());
 
-        // then
-        assertThat(placeRepository.findById(placeId)).isEmpty();
+        // then (soft delete — entity remains but deletedAt is set)
+        Place deleted = placeRepository.findById(placeId).orElseThrow();
+        assertThat(deleted.getDeletedAt()).isNotNull();
     }
 }
