@@ -2,7 +2,6 @@ package com.puppymapserver.user.users.entity;
 
 import com.puppymapserver.global.BaseTimeEntity;
 import com.puppymapserver.jwt.dto.JwtToken;
-import com.puppymapserver.user.push.entity.Push;
 import com.puppymapserver.user.refreshToken.entity.RefreshToken;
 import com.puppymapserver.user.users.entity.enums.Role;
 import com.puppymapserver.user.users.entity.enums.Sex;
@@ -44,9 +43,6 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RefreshToken> refreshTokens = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Push> pushes = new ArrayList<>();
 
     @Builder
     public User(String email, Long id, String nickName, String password, String profileUrl, Role role, SnsType snsType, String useYn) {
