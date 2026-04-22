@@ -1,3 +1,16 @@
+[[place-nearby-top]]
+=== 근처 인기 장소 Top20 조회
+
+==== HTTP Request
+
+include::{snippets}/place-nearby-top/http-request.adoc[]
+include::{snippets}/place-nearby-top/query-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/place-nearby-top/http-response.adoc[]
+include::{snippets}/place-nearby-top/response-fields.adoc[]
+
 [[place-list]]
 === 장소 목록 조회
 
@@ -104,31 +117,18 @@ include::{snippets}/place-tag-add/query-parameters.adoc[]
 include::{snippets}/place-tag-add/http-response.adoc[]
 include::{snippets}/place-tag-add/response-fields.adoc[]
 
-[[place-like]]
-=== 좋아요
+[[place-like-toggle]]
+=== 좋아요 토글
 
 ==== HTTP Request
 
-include::{snippets}/place-like/http-request.adoc[]
-include::{snippets}/place-like/path-parameters.adoc[]
+include::{snippets}/place-like-toggle/http-request.adoc[]
+include::{snippets}/place-like-toggle/path-parameters.adoc[]
 
 ==== HTTP Response
 
-include::{snippets}/place-like/http-response.adoc[]
-include::{snippets}/place-like/response-fields.adoc[]
-
-[[place-unlike]]
-=== 좋아요 취소
-
-==== HTTP Request
-
-include::{snippets}/place-unlike/http-request.adoc[]
-include::{snippets}/place-unlike/path-parameters.adoc[]
-
-==== HTTP Response
-
-include::{snippets}/place-unlike/http-response.adoc[]
-include::{snippets}/place-unlike/response-fields.adoc[]
+include::{snippets}/place-like-toggle/http-response.adoc[]
+include::{snippets}/place-like-toggle/response-fields.adoc[]
 
 [[place-review-create]]
 === 리뷰 작성

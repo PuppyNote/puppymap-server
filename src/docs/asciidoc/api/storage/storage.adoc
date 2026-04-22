@@ -4,7 +4,6 @@
 ==== HTTP Request
 
 include::{snippets}/storage-upload/http-request.adoc[]
-include::{snippets}/storage-upload/path-parameters.adoc[]
 include::{snippets}/storage-upload/request-parts.adoc[]
 
 ==== HTTP Response
