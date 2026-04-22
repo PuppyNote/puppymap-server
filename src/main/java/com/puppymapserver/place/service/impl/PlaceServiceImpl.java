@@ -11,6 +11,7 @@ import com.puppymapserver.place.service.PlaceService;
 import com.puppymapserver.place.service.request.PlaceCreateServiceRequest;
 import com.puppymapserver.place.service.request.PlaceUpdateServiceRequest;
 import com.puppymapserver.place.service.response.PlaceResponse;
+import com.puppymapserver.storage.service.S3StorageService;
 import com.puppymapserver.user.users.entity.User;
 import com.puppymapserver.user.users.service.UserReadService;
 import jakarta.transaction.Transactional;
@@ -27,13 +28,14 @@ public class PlaceServiceImpl implements PlaceService {
     private final PlaceReadService placeReadService;
     private final UserReadService userReadService;
     private final PlaceElasticsearchRepository placeElasticsearchRepository;
+    private final S3StorageService s3StorageService;
 
     @Override
     public PlaceResponse create(Long userId, PlaceCreateServiceRequest request) {
         User user = userReadService.findById(userId);
 
         Place saved = placeRepository.save(request.toEntity(user));
-        return PlaceResponse.of(saved);
+        return PlaceResponse.of(saved, s3StorageService::getPlaceCloudFrontUrl);
     }
 
     @Override
@@ -44,7 +46,7 @@ public class PlaceServiceImpl implements PlaceService {
         place.update(request.getTitle(), request.getContent(), request.getCategory(),
                 request.getLargeDogAvailable(), request.getParkingAvailable(), request.getOffLeashAvailable());
 
-        return PlaceResponse.of(place);
+        return PlaceResponse.of(place, s3StorageService::getPlaceCloudFrontUrl);
     }
 
     @Override

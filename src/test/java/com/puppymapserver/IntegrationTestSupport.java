@@ -13,6 +13,8 @@ import com.puppymapserver.user.users.oauth.feign.google.GoogleApiFeignCall;
 import com.puppymapserver.user.users.oauth.feign.kakao.KakaoApiFeignCall;
 import com.puppymapserver.user.users.repository.UserRepository;
 import com.puppymapserver.storage.service.S3StorageService;
+import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,6 +26,12 @@ public abstract class IntegrationTestSupport {
 
     @MockitoBean
     protected KakaoApiFeignCall kakaoApiFeignCall;
+
+    @BeforeEach
+    void stubS3StorageService() {
+        Mockito.when(s3StorageService.getPlaceCloudFrontUrl(Mockito.anyString()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+    }
 
     @MockitoBean
     protected GoogleApiFeignCall googleApiFeignCall;

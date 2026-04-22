@@ -39,6 +39,10 @@ public class S3StorageService {
         return imageKey;
     }
 
+    public String getPlaceCloudFrontUrl(String imageKey) {
+        return getCloudFrontUrl(imageKey, PLACE_FOLDER);
+    }
+
     public String getCloudFrontUrl(String objectKey, String folder) {
         if (objectKey == null || objectKey.isEmpty()) {
             return objectKey;

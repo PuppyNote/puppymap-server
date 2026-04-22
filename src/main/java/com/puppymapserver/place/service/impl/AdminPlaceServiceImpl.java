@@ -6,6 +6,7 @@ import com.puppymapserver.place.repository.PlaceRepository;
 import com.puppymapserver.place.service.AdminPlaceService;
 import com.puppymapserver.place.service.PlaceReadService;
 import com.puppymapserver.place.service.response.PlaceResponse;
+import com.puppymapserver.storage.service.S3StorageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,22 +21,23 @@ public class AdminPlaceServiceImpl implements AdminPlaceService {
     private final PlaceRepository placeRepository;
     private final PlaceReadService placeReadService;
     private final PlaceServiceImpl placeServiceImpl;
+    private final S3StorageService s3StorageService;
 
     @Override
     public List<PlaceResponse> getAllPlaces(String status) {
         if (status == null) {
             return placeRepository.findAllByStatus(PlaceStatus.PENDING).stream()
-                    .map(PlaceResponse::of)
+                    .map(p -> PlaceResponse.of(p, s3StorageService::getPlaceCloudFrontUrl))
                     .toList();
         }
         return placeRepository.findAllByStatus(PlaceStatus.valueOf(status)).stream()
-                .map(PlaceResponse::of)
+                .map(p -> PlaceResponse.of(p, s3StorageService::getPlaceCloudFrontUrl))
                 .toList();
     }
 
     @Override
     public PlaceResponse getPlace(Long placeId) {
-        return PlaceResponse.of(placeReadService.findByIdOrThrow(placeId));
+        return PlaceResponse.of(placeReadService.findByIdOrThrow(placeId), s3StorageService::getPlaceCloudFrontUrl);
     }
 
     @Override

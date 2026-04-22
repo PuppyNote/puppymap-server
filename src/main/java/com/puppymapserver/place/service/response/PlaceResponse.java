@@ -9,6 +9,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Function;
 
 @Getter
 @Builder
@@ -29,7 +30,7 @@ public class PlaceResponse {
     private long likeCount;
     private LocalDateTime createdDate;
 
-    public static PlaceResponse of(Place place) {
+    public static PlaceResponse of(Place place, Function<String, String> imageUrlMapper) {
         return PlaceResponse.builder()
                 .id(place.getId())
                 .userId(place.getUser().getId())
@@ -43,7 +44,10 @@ public class PlaceResponse {
                 .largeDogAvailable(place.getLargeDogAvailable())
                 .parkingAvailable(place.getParkingAvailable())
                 .offLeashAvailable(place.getOffLeashAvailable())
-                .imageUrls(place.getImages().stream().map(PlaceImage::getImageUrl).toList())
+                .imageUrls(place.getImages().stream()
+                        .map(PlaceImage::getImageUrl)
+                        .map(imageUrlMapper)
+                        .toList())
                 .likeCount(place.getLikeCount())
                 .createdDate(place.getCreatedDate())
                 .build();

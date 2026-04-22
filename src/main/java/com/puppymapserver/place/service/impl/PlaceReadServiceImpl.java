@@ -8,6 +8,7 @@ import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.puppymapserver.global.exception.NotFoundException;
 import com.puppymapserver.place.elasticsearch.PlaceDocument;
+import com.puppymapserver.storage.service.S3StorageService;
 import com.puppymapserver.place.entity.Place;
 import com.puppymapserver.place.entity.enums.PlaceCategory;
 import com.puppymapserver.place.entity.enums.PlaceStatus;
@@ -32,6 +33,7 @@ public class PlaceReadServiceImpl implements PlaceReadService {
 
     private final PlaceRepository placeRepository;
     private final ElasticsearchClient elasticsearchClient;
+    private final S3StorageService s3StorageService;
 
     @Override
     public List<PlaceResponse> getApprovedPlaces(PlaceFilterServiceRequest request) {
@@ -40,7 +42,7 @@ public class PlaceReadServiceImpl implements PlaceReadService {
                 .filter(p -> request.getLargeDog() == null || request.getLargeDog().equals(p.getLargeDogAvailable()))
                 .filter(p -> request.getParking() == null || request.getParking().equals(p.getParkingAvailable()))
                 .filter(p -> request.getOffLeash() == null || request.getOffLeash().equals(p.getOffLeashAvailable()))
-                .map(PlaceResponse::of)
+                .map(p -> PlaceResponse.of(p, s3StorageService::getPlaceCloudFrontUrl))
                 .toList();
     }
 
@@ -58,7 +60,7 @@ public class PlaceReadServiceImpl implements PlaceReadService {
 
     @Override
     public PlaceResponse getApprovedPlace(Long placeId) {
-        return PlaceResponse.of(findApprovedByIdOrThrow(placeId));
+        return PlaceResponse.of(findApprovedByIdOrThrow(placeId), s3StorageService::getPlaceCloudFrontUrl);
     }
 
     @Override
@@ -98,7 +100,7 @@ public class PlaceReadServiceImpl implements PlaceReadService {
             return placeIds.stream()
                     .map(id -> placeRepository.findApprovedById(id).orElse(null))
                     .filter(Objects::nonNull)
-                    .map(PlaceResponse::of)
+                    .map(p -> PlaceResponse.of(p, s3StorageService::getPlaceCloudFrontUrl))
                     .toList();
 
         } catch (IOException e) {
@@ -109,14 +111,14 @@ public class PlaceReadServiceImpl implements PlaceReadService {
     @Override
     public List<PlaceResponse> getTop20NearbyByLikeCount(double lat, double lng, double radiusKm) {
         return placeRepository.findTop20NearbyOrderByLikeCount(lat, lng, radiusKm).stream()
-                .map(PlaceResponse::of)
+                .map(p -> PlaceResponse.of(p, s3StorageService::getPlaceCloudFrontUrl))
                 .toList();
     }
 
     @Override
     public List<PlaceResponse> getMyPlaces(Long userId) {
         return placeRepository.findAllByUserId(userId).stream()
-                .map(PlaceResponse::of)
+                .map(p -> PlaceResponse.of(p, s3StorageService::getPlaceCloudFrontUrl))
                 .toList();
     }
 }

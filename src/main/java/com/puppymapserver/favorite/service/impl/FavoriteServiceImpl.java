@@ -8,6 +8,7 @@ import com.puppymapserver.global.exception.NotFoundException;
 import com.puppymapserver.global.exception.PuppyMapException;
 import com.puppymapserver.place.entity.Place;
 import com.puppymapserver.place.service.PlaceReadService;
+import com.puppymapserver.storage.service.S3StorageService;
 import com.puppymapserver.user.users.entity.User;
 import com.puppymapserver.user.users.service.UserReadService;
 import jakarta.transaction.Transactional;
@@ -24,6 +25,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     private final FavoriteJpaRepository favoriteJpaRepository;
     private final PlaceReadService placeReadService;
     private final UserReadService userReadService;
+    private final S3StorageService s3StorageService;
 
     @Override
     public void add(Long placeId, Long userId) {
@@ -47,7 +49,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     public List<FavoriteResponse> getMyFavorites(Long userId) {
         return favoriteJpaRepository.findAllByUserId(userId).stream()
-                .map(FavoriteResponse::of)
+                .map(f -> FavoriteResponse.of(f, s3StorageService::getPlaceCloudFrontUrl))
                 .toList();
     }
 }
