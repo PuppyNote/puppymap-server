@@ -11,7 +11,6 @@ import com.puppymapserver.user.users.entity.enums.Role;
 import com.puppymapserver.user.users.entity.enums.SnsType;
 import com.puppymapserver.user.users.oauth.client.OAuthApiClient;
 import com.puppymapserver.user.users.repository.UserRepository;
-import com.puppymapserver.user.push.service.PushWriteService;
 import com.puppymapserver.user.users.service.LoginService;
 import com.puppymapserver.user.users.service.UserReadService;
 import com.puppymapserver.user.refreshToken.entity.RefreshToken;
@@ -49,12 +48,9 @@ public class LoginServiceImpl implements LoginService {
     private final UserRepository userRepository;
     private final UserReadService userReadService;
     private final RefreshTokenReadService refreshTokenReadService;
-    private final PushWriteService pushWriteService;
-
     public LoginServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, JwtTokenGenerator jwtTokenGenerator,
                             List<OAuthApiClient> clients, UserRepository userRepository, UserReadService userReadService,
-                            RefreshTokenReadService refreshTokenReadService, EmailService emailService,
-                            PushWriteService pushWriteService) {
+                            RefreshTokenReadService refreshTokenReadService, EmailService emailService) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userRepository = userRepository;
         this.jwtTokenGenerator = jwtTokenGenerator;
@@ -64,7 +60,6 @@ public class LoginServiceImpl implements LoginService {
         this.userReadService = userReadService;
         this.refreshTokenReadService = refreshTokenReadService;
         this.emailService = emailService;
-        this.pushWriteService = pushWriteService;
     }
 
     @Override
@@ -76,8 +71,7 @@ public class LoginServiceImpl implements LoginService {
             throw new PuppyMapException("아이디 또는 패스워드가 일치하지 않습니다.");
         } //3. 비밀번호 체크
 
-        JwtToken jwtToken = setJwtTokenPushKey(user, loginServiceRequest.getDeviceId(),
-                loginServiceRequest.getPushKey());
+        JwtToken jwtToken = generateToken(user);
 
         return LoginResponse.of(user, jwtToken);
     }
@@ -105,8 +99,7 @@ public class LoginServiceImpl implements LoginService {
 
         user.checkSnsType(snsType);              //SNS가입여부확인
 
-        JwtToken jwtToken = setJwtTokenPushKey(user, oAuthLoginServiceRequest.getDeviceId(),
-                oAuthLoginServiceRequest.getPushKey());
+        JwtToken jwtToken = generateToken(user);
 
         return OAuthLoginResponse.of(user, jwtToken);
     }
@@ -139,11 +132,10 @@ public class LoginServiceImpl implements LoginService {
         user.updatePassword(bCryptPasswordEncoder.encode(request.getNewPassword()));
     }
 
-    private JwtToken setJwtTokenPushKey(User user, String deviceId, String pushKey) throws JsonProcessingException {
+    private JwtToken generateToken(User user) throws JsonProcessingException {
         LoginUserInfo userInfo = LoginUserInfo.of(user.getId(), user.getRole().name());
         JwtToken jwtToken = jwtTokenGenerator.generate(userInfo);
-        user.checkRefreshToken(jwtToken, deviceId);
-        pushWriteService.upsertByDeviceId(deviceId, user, pushKey);
+        user.checkRefreshToken(jwtToken, "WEB");
         return jwtToken;
     }
 

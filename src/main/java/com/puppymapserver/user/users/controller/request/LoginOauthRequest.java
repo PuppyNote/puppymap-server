@@ -16,24 +16,17 @@ public class LoginOauthRequest {
     private String token;
     @NotNull(message = "인증타입은 필수입니다.")
     private SnsType snsType;
-    @NotNull(message = "디바이스ID는 필수입니다.")
-    private String deviceId;
-    private String pushKey;
 
     @Builder
-    private LoginOauthRequest(String token, SnsType snsType, String deviceId, String pushKey) {
+    private LoginOauthRequest(String token, SnsType snsType) {
         this.token = token;
         this.snsType = snsType;
-        this.deviceId = deviceId;
-        this.pushKey = pushKey;
     }
 
     public OAuthLoginServiceRequest toServiceRequest(){
         return OAuthLoginServiceRequest.builder()
             .token(token)
             .snsType(snsType)
-            .deviceId(deviceId)
-            .pushKey(pushKey)
             .build();
     }
 
