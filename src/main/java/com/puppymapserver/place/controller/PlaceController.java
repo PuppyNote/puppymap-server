@@ -18,6 +18,7 @@ import com.puppymapserver.review.service.request.ReviewCreateServiceRequest;
 import com.puppymapserver.review.service.response.ReviewResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +49,7 @@ public class PlaceController {
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<PlaceResponse>> search(@ModelAttribute PlaceSearchRequest request) {
+    public ApiResponse<List<PlaceResponse>> search(@Validated @ModelAttribute PlaceSearchRequest request) {
         return ApiResponse.of(HttpStatus.OK, "검색 성공",
                 placeReadService.searchPlaces(request.toServiceRequest()));
     }

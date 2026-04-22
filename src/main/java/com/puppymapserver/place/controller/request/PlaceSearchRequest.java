@@ -1,6 +1,7 @@
 package com.puppymapserver.place.controller.request;
 
 import com.puppymapserver.place.service.request.PlaceSearchServiceRequest;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,8 +12,14 @@ import lombok.Setter;
 public class PlaceSearchRequest {
 
     private String keyword;
+
+    @NotNull(message = "위도는 필수입니다.")
     private Double lat;
+
+    @NotNull(message = "경도는 필수입니다.")
     private Double lng;
+
+    @NotNull(message = "반경은 필수입니다.")
     private Double radius;
 
     public PlaceSearchServiceRequest toServiceRequest() {

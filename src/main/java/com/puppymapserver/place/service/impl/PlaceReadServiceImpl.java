@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -55,18 +56,18 @@ public class PlaceReadServiceImpl implements PlaceReadService {
         try {
             List<Query> queries = new ArrayList<>();
 
+            // 지도 중심 반경 필터 (항상 적용)
+            String distance = request.getRadiusKm() + "km";
+            queries.add(Query.of(q -> q.geoDistance(g -> g
+                    .field("location")
+                    .location(l -> l.latlon(ll -> ll.lat(request.getLat()).lon(request.getLng())))
+                    .distance(distance))));
+
+            // 키워드 필터 (선택)
             if (request.getKeyword() != null && !request.getKeyword().isBlank()) {
                 queries.add(Query.of(q -> q.multiMatch(m -> m
                         .query(request.getKeyword())
                         .fields("title", "content"))));
-            }
-
-            if (request.getLat() != null && request.getLng() != null && request.getRadiusKm() != null) {
-                String distance = request.getRadiusKm() + "km";
-                queries.add(Query.of(q -> q.geoDistance(g -> g
-                        .field("location")
-                        .location(l -> l.latlon(ll -> ll.lat(request.getLat()).lon(request.getLng())))
-                        .distance(distance))));
             }
 
             BoolQuery.Builder boolBuilder = new BoolQuery.Builder();
@@ -80,13 +81,13 @@ public class PlaceReadServiceImpl implements PlaceReadService {
             SearchResponse<PlaceDocument> response = elasticsearchClient.search(searchRequest, PlaceDocument.class);
 
             List<Long> placeIds = response.hits().hits().stream()
-                    .map(Hit::id)
+                    .map(Hit::id).filter(Objects::nonNull)
                     .map(Long::valueOf)
                     .toList();
 
             return placeIds.stream()
                     .map(id -> placeRepository.findApprovedById(id).orElse(null))
-                    .filter(p -> p != null)
+                    .filter(Objects::nonNull)
                     .map(PlaceResponse::of)
                     .toList();
 
