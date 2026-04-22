@@ -6,9 +6,9 @@ import com.puppymapserver.like.entity.PlaceLike;
 import com.puppymapserver.like.repository.PlaceLikeJpaRepository;
 import com.puppymapserver.like.service.PlaceLikeService;
 import com.puppymapserver.place.entity.Place;
-import com.puppymapserver.place.repository.PlaceRepository;
+import com.puppymapserver.place.service.PlaceReadService;
 import com.puppymapserver.user.users.entity.User;
-import com.puppymapserver.user.users.repository.UserRepository;
+import com.puppymapserver.user.users.service.UserReadService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
 public class PlaceLikeServiceImpl implements PlaceLikeService {
 
     private final PlaceLikeJpaRepository placeLikeJpaRepository;
-    private final PlaceRepository placeRepository;
-    private final UserRepository userRepository;
+    private final PlaceReadService placeReadService;
+    private final UserReadService userReadService;
 
     @Override
     public void like(Long placeId, Long userId) {
@@ -28,10 +28,8 @@ public class PlaceLikeServiceImpl implements PlaceLikeService {
             throw new PuppyMapException("이미 좋아요를 누른 장소입니다.");
         }
 
-        Place place = placeRepository.findApprovedById(placeId)
-                .orElseThrow(() -> new NotFoundException("장소를 찾을 수 없습니다."));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+        Place place = placeReadService.findApprovedByIdOrThrow(placeId);
+        User user = userReadService.findById(userId);
 
         placeLikeJpaRepository.save(PlaceLike.builder().place(place).user(user).build());
     }

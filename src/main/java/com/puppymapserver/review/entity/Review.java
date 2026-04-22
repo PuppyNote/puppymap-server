@@ -1,6 +1,7 @@
 package com.puppymapserver.review.entity;
 
 import com.puppymapserver.global.BaseTimeEntity;
+import com.puppymapserver.global.exception.PuppyMapException;
 import com.puppymapserver.place.entity.Place;
 import com.puppymapserver.user.users.entity.User;
 import jakarta.persistence.*;
@@ -37,6 +38,12 @@ public class Review extends BaseTimeEntity {
         this.user = user;
         this.rating = rating;
         this.comment = comment;
+    }
+
+    public void validateOwner(Long userId) {
+        if (!this.user.getId().equals(userId)) {
+            throw new PuppyMapException("본인의 리뷰만 수정/삭제할 수 있습니다.");
+        }
     }
 
     public void update(Integer rating, String comment) {

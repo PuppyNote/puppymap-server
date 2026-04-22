@@ -2,6 +2,7 @@ package com.puppymapserver.place.entity;
 
 import com.puppymapserver.favorite.entity.Favorite;
 import com.puppymapserver.global.BaseTimeEntity;
+import com.puppymapserver.global.exception.PuppyMapException;
 import com.puppymapserver.like.entity.PlaceLike;
 import com.puppymapserver.place.entity.enums.PlaceCategory;
 import com.puppymapserver.place.entity.enums.PlaceStatus;
@@ -92,6 +93,12 @@ public class Place extends BaseTimeEntity {
         this.largeDogAvailable = largeDogAvailable;
         this.parkingAvailable = parkingAvailable;
         this.offLeashAvailable = offLeashAvailable;
+    }
+
+    public void validateOwner(Long userId) {
+        if (!this.user.getId().equals(userId)) {
+            throw new PuppyMapException("본인의 제보만 수정/삭제할 수 있습니다.");
+        }
     }
 
     public void approve() {

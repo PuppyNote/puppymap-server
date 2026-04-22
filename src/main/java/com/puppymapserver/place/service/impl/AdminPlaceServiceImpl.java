@@ -1,10 +1,10 @@
 package com.puppymapserver.place.service.impl;
 
-import com.puppymapserver.global.exception.NotFoundException;
 import com.puppymapserver.place.entity.Place;
 import com.puppymapserver.place.entity.enums.PlaceStatus;
 import com.puppymapserver.place.repository.PlaceRepository;
 import com.puppymapserver.place.service.AdminPlaceService;
+import com.puppymapserver.place.service.PlaceReadService;
 import com.puppymapserver.place.service.response.PlaceResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +18,7 @@ import java.util.List;
 public class AdminPlaceServiceImpl implements AdminPlaceService {
 
     private final PlaceRepository placeRepository;
+    private final PlaceReadService placeReadService;
     private final PlaceServiceImpl placeServiceImpl;
 
     @Override
@@ -34,23 +35,18 @@ public class AdminPlaceServiceImpl implements AdminPlaceService {
 
     @Override
     public PlaceResponse getPlace(Long placeId) {
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new NotFoundException("장소를 찾을 수 없습니다."));
-        return PlaceResponse.of(place);
+        return PlaceResponse.of(placeReadService.findByIdOrThrow(placeId));
     }
 
     @Override
     public void approve(Long placeId) {
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new NotFoundException("장소를 찾을 수 없습니다."));
+        Place place = placeReadService.findByIdOrThrow(placeId);
         place.approve();
         placeServiceImpl.indexToElasticsearch(place);
     }
 
     @Override
     public void reject(Long placeId, String reason) {
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new NotFoundException("장소를 찾을 수 없습니다."));
-        place.reject(reason);
+        placeReadService.findByIdOrThrow(placeId).reject(reason);
     }
 }

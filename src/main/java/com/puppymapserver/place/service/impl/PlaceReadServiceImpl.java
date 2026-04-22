@@ -45,10 +45,20 @@ public class PlaceReadServiceImpl implements PlaceReadService {
     }
 
     @Override
-    public PlaceResponse getApprovedPlace(Long placeId) {
-        Place place = placeRepository.findApprovedById(placeId)
+    public Place findByIdOrThrow(Long placeId) {
+        return placeRepository.findById(placeId)
                 .orElseThrow(() -> new NotFoundException("장소를 찾을 수 없습니다."));
-        return PlaceResponse.of(place);
+    }
+
+    @Override
+    public Place findApprovedByIdOrThrow(Long placeId) {
+        return placeRepository.findApprovedById(placeId)
+                .orElseThrow(() -> new NotFoundException("장소를 찾을 수 없습니다."));
+    }
+
+    @Override
+    public PlaceResponse getApprovedPlace(Long placeId) {
+        return PlaceResponse.of(findApprovedByIdOrThrow(placeId));
     }
 
     @Override

@@ -7,9 +7,9 @@ import com.puppymapserver.favorite.service.response.FavoriteResponse;
 import com.puppymapserver.global.exception.NotFoundException;
 import com.puppymapserver.global.exception.PuppyMapException;
 import com.puppymapserver.place.entity.Place;
-import com.puppymapserver.place.repository.PlaceRepository;
+import com.puppymapserver.place.service.PlaceReadService;
 import com.puppymapserver.user.users.entity.User;
-import com.puppymapserver.user.users.repository.UserRepository;
+import com.puppymapserver.user.users.service.UserReadService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,8 +22,8 @@ import java.util.List;
 public class FavoriteServiceImpl implements FavoriteService {
 
     private final FavoriteJpaRepository favoriteJpaRepository;
-    private final PlaceRepository placeRepository;
-    private final UserRepository userRepository;
+    private final PlaceReadService placeReadService;
+    private final UserReadService userReadService;
 
     @Override
     public void add(Long placeId, Long userId) {
@@ -31,10 +31,8 @@ public class FavoriteServiceImpl implements FavoriteService {
             throw new PuppyMapException("이미 즐겨찾기에 추가된 장소입니다.");
         }
 
-        Place place = placeRepository.findApprovedById(placeId)
-                .orElseThrow(() -> new NotFoundException("장소를 찾을 수 없습니다."));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+        Place place = placeReadService.findApprovedByIdOrThrow(placeId);
+        User user = userReadService.findById(userId);
 
         favoriteJpaRepository.save(Favorite.builder().place(place).user(user).build());
     }

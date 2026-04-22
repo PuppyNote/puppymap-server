@@ -1,25 +1,22 @@
 package com.puppymapserver.place.service.impl;
 
-import com.puppymapserver.global.exception.NotFoundException;
-import com.puppymapserver.global.exception.PuppyMapException;
 import com.puppymapserver.place.elasticsearch.PlaceDocument;
 import com.puppymapserver.place.elasticsearch.PlaceElasticsearchRepository;
 import com.puppymapserver.place.entity.Place;
 import com.puppymapserver.place.entity.PlaceTag;
 import com.puppymapserver.place.entity.enums.TagType;
 import com.puppymapserver.place.repository.PlaceRepository;
+import com.puppymapserver.place.service.PlaceReadService;
 import com.puppymapserver.place.service.PlaceService;
 import com.puppymapserver.place.service.request.PlaceCreateServiceRequest;
 import com.puppymapserver.place.service.request.PlaceUpdateServiceRequest;
 import com.puppymapserver.place.service.response.PlaceResponse;
-import com.puppymapserver.user.users.repository.UserRepository;
 import com.puppymapserver.user.users.entity.User;
+import com.puppymapserver.user.users.service.UserReadService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -27,13 +24,13 @@ import java.util.List;
 public class PlaceServiceImpl implements PlaceService {
 
     private final PlaceRepository placeRepository;
-    private final UserRepository userRepository;
+    private final PlaceReadService placeReadService;
+    private final UserReadService userReadService;
     private final PlaceElasticsearchRepository placeElasticsearchRepository;
 
     @Override
     public PlaceResponse create(Long userId, PlaceCreateServiceRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+        User user = userReadService.findById(userId);
 
         Place saved = placeRepository.save(request.toEntity(user));
         return PlaceResponse.of(saved);
@@ -41,12 +38,8 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public PlaceResponse update(PlaceUpdateServiceRequest request) {
-        Place place = placeRepository.findById(request.getPlaceId())
-                .orElseThrow(() -> new NotFoundException("장소를 찾을 수 없습니다."));
-
-        if (!place.getUser().getId().equals(request.getUserId())) {
-            throw new PuppyMapException("본인의 제보만 수정할 수 있습니다.");
-        }
+        Place place = placeReadService.findByIdOrThrow(request.getPlaceId());
+        place.validateOwner(request.getUserId());
 
         place.update(request.getTitle(), request.getContent(), request.getCategory(),
                 request.getLargeDogAvailable(), request.getParkingAvailable(), request.getOffLeashAvailable());
@@ -56,12 +49,8 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public void delete(Long placeId, Long userId) {
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new NotFoundException("장소를 찾을 수 없습니다."));
-
-        if (!place.getUser().getId().equals(userId)) {
-            throw new PuppyMapException("본인의 제보만 삭제할 수 있습니다.");
-        }
+        Place place = placeReadService.findByIdOrThrow(placeId);
+        place.validateOwner(userId);
 
         placeElasticsearchRepository.deleteById(String.valueOf(placeId));
         placeRepository.delete(place);
@@ -69,10 +58,8 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public void addTag(Long placeId, Long userId, TagType tagType) {
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new NotFoundException("장소를 찾을 수 없습니다."));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+        Place place = placeReadService.findByIdOrThrow(placeId);
+        User user = userReadService.findById(userId);
 
         place.getTags().add(PlaceTag.builder()
                 .place(place)
