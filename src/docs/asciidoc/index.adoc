@@ -8,55 +8,235 @@
 
 == 인증 API
 
-include::auth/auth-login.adoc[]
-include::auth/auth-oauth-login.adoc[]
-include::auth/auth-refresh.adoc[]
-include::auth/auth-password-email-send.adoc[]
-include::auth/auth-password-reset.adoc[]
+=== 일반 로그인
+
+include::{snippets}/auth-login/http-request.adoc[]
+include::{snippets}/auth-login/request-fields.adoc[]
+include::{snippets}/auth-login/http-response.adoc[]
+include::{snippets}/auth-login/response-fields.adoc[]
+
+=== OAuth 로그인
+
+include::{snippets}/auth-oauth-login/http-request.adoc[]
+include::{snippets}/auth-oauth-login/request-fields.adoc[]
+include::{snippets}/auth-oauth-login/http-response.adoc[]
+include::{snippets}/auth-oauth-login/response-fields.adoc[]
+
+=== 토큰 갱신
+
+include::{snippets}/auth-refresh/http-request.adoc[]
+include::{snippets}/auth-refresh/request-fields.adoc[]
+include::{snippets}/auth-refresh/http-response.adoc[]
+include::{snippets}/auth-refresh/response-fields.adoc[]
+
+=== 비밀번호 재설정 이메일 전송
+
+include::{snippets}/auth-password-email-send/http-request.adoc[]
+include::{snippets}/auth-password-email-send/request-fields.adoc[]
+include::{snippets}/auth-password-email-send/http-response.adoc[]
+include::{snippets}/auth-password-email-send/response-fields.adoc[]
+
+=== 비밀번호 재설정
+
+include::{snippets}/auth-password-reset/http-request.adoc[]
+include::{snippets}/auth-password-reset/request-fields.adoc[]
+include::{snippets}/auth-password-reset/http-response.adoc[]
+include::{snippets}/auth-password-reset/response-fields.adoc[]
 
 == 사용자 API
 
-include::user/user-signup.adoc[]
-include::user/user-email-send.adoc[]
-include::user/user-profile-get.adoc[]
-include::user/user-profile-update.adoc[]
-include::user/user-withdraw.adoc[]
+=== 회원가입
+
+include::{snippets}/user-signup/http-request.adoc[]
+include::{snippets}/user-signup/request-fields.adoc[]
+include::{snippets}/user-signup/http-response.adoc[]
+include::{snippets}/user-signup/response-fields.adoc[]
+
+=== 이메일 인증 전송
+
+include::{snippets}/user-email-send/http-request.adoc[]
+include::{snippets}/user-email-send/request-fields.adoc[]
+include::{snippets}/user-email-send/http-response.adoc[]
+include::{snippets}/user-email-send/response-fields.adoc[]
+
+=== 내 프로필 조회
+
+include::{snippets}/user-profile-get/http-request.adoc[]
+include::{snippets}/user-profile-get/http-response.adoc[]
+include::{snippets}/user-profile-get/response-fields.adoc[]
+
+=== 프로필 수정
+
+include::{snippets}/user-profile-update/http-request.adoc[]
+include::{snippets}/user-profile-update/request-fields.adoc[]
+include::{snippets}/user-profile-update/http-response.adoc[]
+include::{snippets}/user-profile-update/response-fields.adoc[]
+
+=== 회원 탈퇴
+
+include::{snippets}/user-withdraw/http-request.adoc[]
+include::{snippets}/user-withdraw/http-response.adoc[]
+include::{snippets}/user-withdraw/response-fields.adoc[]
 
 == 마이페이지 API
 
-include::mypage/mypage-places.adoc[]
+=== 내 제보 목록 조회
+
+include::{snippets}/mypage-places/http-request.adoc[]
+include::{snippets}/mypage-places/http-response.adoc[]
+include::{snippets}/mypage-places/response-fields.adoc[]
 
 == 파일 업로드 API
 
-include::storage/storage-upload.adoc[]
+=== 파일 업로드
+
+include::{snippets}/storage-upload/http-request.adoc[]
+include::{snippets}/storage-upload/path-parameters.adoc[]
+include::{snippets}/storage-upload/request-parts.adoc[]
+include::{snippets}/storage-upload/http-response.adoc[]
+include::{snippets}/storage-upload/response-fields.adoc[]
 
 == 장소 API
 
-include::place/place-list.adoc[]
-include::place/place-detail.adoc[]
-include::place/place-search.adoc[]
-include::place/place-reviews.adoc[]
-include::place/place-create.adoc[]
-include::place/place-update.adoc[]
-include::place/place-delete.adoc[]
-include::place/place-tag-add.adoc[]
-include::place/place-like.adoc[]
-include::place/place-unlike.adoc[]
-include::place/place-review-create.adoc[]
+=== 장소 목록 조회
+
+include::{snippets}/place-list/http-request.adoc[]
+include::{snippets}/place-list/query-parameters.adoc[]
+include::{snippets}/place-list/http-response.adoc[]
+include::{snippets}/place-list/response-fields.adoc[]
+
+=== 장소 상세 조회
+
+include::{snippets}/place-detail/http-request.adoc[]
+include::{snippets}/place-detail/path-parameters.adoc[]
+include::{snippets}/place-detail/http-response.adoc[]
+include::{snippets}/place-detail/response-fields.adoc[]
+
+=== 장소 검색
+
+include::{snippets}/place-search/http-request.adoc[]
+include::{snippets}/place-search/query-parameters.adoc[]
+include::{snippets}/place-search/http-response.adoc[]
+include::{snippets}/place-search/response-fields.adoc[]
+
+=== 장소 리뷰 목록 조회
+
+include::{snippets}/place-reviews/http-request.adoc[]
+include::{snippets}/place-reviews/path-parameters.adoc[]
+include::{snippets}/place-reviews/http-response.adoc[]
+include::{snippets}/place-reviews/response-fields.adoc[]
+
+=== 장소 제보
+
+include::{snippets}/place-create/http-request.adoc[]
+include::{snippets}/place-create/request-fields.adoc[]
+include::{snippets}/place-create/http-response.adoc[]
+include::{snippets}/place-create/response-fields.adoc[]
+
+=== 장소 수정
+
+include::{snippets}/place-update/http-request.adoc[]
+include::{snippets}/place-update/path-parameters.adoc[]
+include::{snippets}/place-update/request-fields.adoc[]
+include::{snippets}/place-update/http-response.adoc[]
+include::{snippets}/place-update/response-fields.adoc[]
+
+=== 장소 삭제
+
+include::{snippets}/place-delete/http-request.adoc[]
+include::{snippets}/place-delete/path-parameters.adoc[]
+include::{snippets}/place-delete/http-response.adoc[]
+include::{snippets}/place-delete/response-fields.adoc[]
+
+=== 상태 태그 등록
+
+include::{snippets}/place-tag-add/http-request.adoc[]
+include::{snippets}/place-tag-add/path-parameters.adoc[]
+include::{snippets}/place-tag-add/query-parameters.adoc[]
+include::{snippets}/place-tag-add/http-response.adoc[]
+include::{snippets}/place-tag-add/response-fields.adoc[]
+
+=== 좋아요
+
+include::{snippets}/place-like/http-request.adoc[]
+include::{snippets}/place-like/path-parameters.adoc[]
+include::{snippets}/place-like/http-response.adoc[]
+include::{snippets}/place-like/response-fields.adoc[]
+
+=== 좋아요 취소
+
+include::{snippets}/place-unlike/http-request.adoc[]
+include::{snippets}/place-unlike/path-parameters.adoc[]
+include::{snippets}/place-unlike/http-response.adoc[]
+include::{snippets}/place-unlike/response-fields.adoc[]
+
+=== 리뷰 작성
+
+include::{snippets}/place-review-create/http-request.adoc[]
+include::{snippets}/place-review-create/path-parameters.adoc[]
+include::{snippets}/place-review-create/request-fields.adoc[]
+include::{snippets}/place-review-create/http-response.adoc[]
+include::{snippets}/place-review-create/response-fields.adoc[]
 
 == 관리자 장소 API
 
-include::admin/admin-place-list.adoc[]
-include::admin/admin-place-approve.adoc[]
-include::admin/admin-place-reject.adoc[]
+=== 전체 제보 목록 조회
+
+include::{snippets}/admin-place-list/http-request.adoc[]
+include::{snippets}/admin-place-list/query-parameters.adoc[]
+include::{snippets}/admin-place-list/http-response.adoc[]
+include::{snippets}/admin-place-list/response-fields.adoc[]
+
+=== 장소 승인
+
+include::{snippets}/admin-place-approve/http-request.adoc[]
+include::{snippets}/admin-place-approve/path-parameters.adoc[]
+include::{snippets}/admin-place-approve/http-response.adoc[]
+include::{snippets}/admin-place-approve/response-fields.adoc[]
+
+=== 장소 거절
+
+include::{snippets}/admin-place-reject/http-request.adoc[]
+include::{snippets}/admin-place-reject/path-parameters.adoc[]
+include::{snippets}/admin-place-reject/query-parameters.adoc[]
+include::{snippets}/admin-place-reject/http-response.adoc[]
+include::{snippets}/admin-place-reject/response-fields.adoc[]
 
 == 리뷰 API
 
-include::review/review-update.adoc[]
-include::review/review-delete.adoc[]
+=== 리뷰 수정
+
+include::{snippets}/review-update/http-request.adoc[]
+include::{snippets}/review-update/path-parameters.adoc[]
+include::{snippets}/review-update/request-fields.adoc[]
+include::{snippets}/review-update/http-response.adoc[]
+include::{snippets}/review-update/response-fields.adoc[]
+
+=== 리뷰 삭제
+
+include::{snippets}/review-delete/http-request.adoc[]
+include::{snippets}/review-delete/path-parameters.adoc[]
+include::{snippets}/review-delete/http-response.adoc[]
+include::{snippets}/review-delete/response-fields.adoc[]
 
 == 즐겨찾기 API
 
-include::favorite/favorite-list.adoc[]
-include::favorite/favorite-add.adoc[]
-include::favorite/favorite-remove.adoc[]
+=== 내 즐겨찾기 목록 조회
+
+include::{snippets}/favorite-list/http-request.adoc[]
+include::{snippets}/favorite-list/http-response.adoc[]
+include::{snippets}/favorite-list/response-fields.adoc[]
+
+=== 즐겨찾기 추가
+
+include::{snippets}/favorite-add/http-request.adoc[]
+include::{snippets}/favorite-add/path-parameters.adoc[]
+include::{snippets}/favorite-add/http-response.adoc[]
+include::{snippets}/favorite-add/response-fields.adoc[]
+
+=== 즐겨찾기 삭제
+
+include::{snippets}/favorite-remove/http-request.adoc[]
+include::{snippets}/favorite-remove/path-parameters.adoc[]
+include::{snippets}/favorite-remove/http-response.adoc[]
+include::{snippets}/favorite-remove/response-fields.adoc[]
