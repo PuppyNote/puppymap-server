@@ -60,7 +60,8 @@ class MyPageControllerDocsTest extends RestDocsSupport {
                 .createdDate(LocalDateTime.now())
                 .build();
 
-        given(placeReadService.getMyPlaces(anyLong())).willReturn(List.of(place));
+        given(placeReadService.getMyPlaces(anyLong()))
+                .willReturn(List.of(place));
 
         mockMvc.perform(get("/api/v1/users/me/places")
                         .contentType(MediaType.APPLICATION_JSON))

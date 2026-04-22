@@ -73,7 +73,7 @@ class PlaceControllerDocsTest extends RestDocsSupport {
     @DisplayName("승인된 장소 목록 조회 API")
     @Test
     void 장소_목록_조회() throws Exception {
-        given(placeReadService.getApprovedPlaces(any(), any(), any(), any()))
+        given(placeReadService.getApprovedPlaces(any()))
                 .willReturn(List.of(samplePlace(PlaceStatus.APPROVED)));
 
         mockMvc.perform(get("/api/v1/places")
@@ -156,7 +156,7 @@ class PlaceControllerDocsTest extends RestDocsSupport {
     @DisplayName("장소 검색 API")
     @Test
     void 장소_검색() throws Exception {
-        given(placeReadService.searchPlaces(any(), any(), any(), any()))
+        given(placeReadService.searchPlaces(any()))
                 .willReturn(List.of(samplePlace(PlaceStatus.APPROVED)));
 
         mockMvc.perform(get("/api/v1/places/search")
