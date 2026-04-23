@@ -31,6 +31,10 @@ public class PlaceResponse {
     private LocalDateTime createdDate;
 
     public static PlaceResponse of(Place place, Function<String, String> imageUrlMapper) {
+        return of(place, imageUrlMapper, place.getLikeCount());
+    }
+
+    public static PlaceResponse of(Place place, Function<String, String> imageUrlMapper, long likeCount) {
         return PlaceResponse.builder()
                 .id(place.getId())
                 .userId(place.getUser().getId())
@@ -48,7 +52,7 @@ public class PlaceResponse {
                         .map(PlaceImage::getImageUrl)
                         .map(imageUrlMapper)
                         .toList())
-                .likeCount(place.getLikeCount())
+                .likeCount(likeCount)
                 .createdDate(place.getCreatedDate())
                 .build();
     }

@@ -8,6 +8,7 @@ import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.puppymapserver.global.exception.NotFoundException;
 import com.puppymapserver.place.elasticsearch.PlaceDocument;
+import com.puppymapserver.redis.service.PlaceLikeRedisService;
 import com.puppymapserver.storage.service.S3StorageService;
 import com.puppymapserver.place.entity.Place;
 import com.puppymapserver.place.entity.enums.PlaceCategory;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -34,16 +36,17 @@ public class PlaceReadServiceImpl implements PlaceReadService {
     private final PlaceRepository placeRepository;
     private final ElasticsearchClient elasticsearchClient;
     private final S3StorageService s3StorageService;
+    private final PlaceLikeRedisService placeLikeRedisService;
 
     @Override
     public List<PlaceResponse> getApprovedPlaces(PlaceFilterServiceRequest request) {
-        return placeRepository.findAllApproved().stream()
+        List<Place> places = placeRepository.findAllApproved().stream()
                 .filter(p -> request.getCategory() == null || p.getCategory() == PlaceCategory.valueOf(request.getCategory()))
                 .filter(p -> request.getLargeDog() == null || request.getLargeDog().equals(p.getLargeDogAvailable()))
                 .filter(p -> request.getParking() == null || request.getParking().equals(p.getParkingAvailable()))
                 .filter(p -> request.getOffLeash() == null || request.getOffLeash().equals(p.getOffLeashAvailable()))
-                .map(p -> PlaceResponse.of(p, s3StorageService::getPlaceCloudFrontUrl))
                 .toList();
+        return toResponses(places);
     }
 
     @Override
@@ -60,7 +63,10 @@ public class PlaceReadServiceImpl implements PlaceReadService {
 
     @Override
     public PlaceResponse getApprovedPlace(Long placeId) {
-        return PlaceResponse.of(findApprovedByIdOrThrow(placeId), s3StorageService::getPlaceCloudFrontUrl);
+        Place place = findApprovedByIdOrThrow(placeId);
+        long likeCount = placeLikeRedisService.getLikeCount(placeId)
+                .orElse(place.getLikeCount());
+        return PlaceResponse.of(place, s3StorageService::getPlaceCloudFrontUrl, likeCount);
     }
 
     @Override
@@ -104,11 +110,11 @@ public class PlaceReadServiceImpl implements PlaceReadService {
                     .map(Long::valueOf)
                     .toList();
 
-            return placeIds.stream()
+            List<Place> places = placeIds.stream()
                     .map(id -> placeRepository.findApprovedById(id).orElse(null))
                     .filter(Objects::nonNull)
-                    .map(p -> PlaceResponse.of(p, s3StorageService::getPlaceCloudFrontUrl))
                     .toList();
+            return toResponses(places);
 
         } catch (IOException e) {
             throw new RuntimeException("검색 중 오류가 발생했습니다.", e);
@@ -117,15 +123,23 @@ public class PlaceReadServiceImpl implements PlaceReadService {
 
     @Override
     public List<PlaceResponse> getTop20NearbyByLikeCount(double lat, double lng, double radiusKm, String category) {
-        return placeRepository.findTop20NearbyOrderByLikeCount(lat, lng, radiusKm, category).stream()
-                .map(p -> PlaceResponse.of(p, s3StorageService::getPlaceCloudFrontUrl))
-                .toList();
+        return toResponses(placeRepository.findTop20NearbyOrderByLikeCount(lat, lng, radiusKm, category));
     }
 
     @Override
     public List<PlaceResponse> getMyPlaces(Long userId) {
-        return placeRepository.findAllByUserId(userId).stream()
-                .map(p -> PlaceResponse.of(p, s3StorageService::getPlaceCloudFrontUrl))
+        return toResponses(placeRepository.findAllByUserId(userId));
+    }
+
+    private List<PlaceResponse> toResponses(List<Place> places) {
+        List<Long> ids = places.stream().map(Place::getId).toList();
+        Map<Long, Long> redisLikeCounts = placeLikeRedisService.getLikeCountBatch(ids);
+        return places.stream()
+                .map(p -> PlaceResponse.of(
+                        p,
+                        s3StorageService::getPlaceCloudFrontUrl,
+                        redisLikeCounts.getOrDefault(p.getId(), p.getLikeCount())
+                ))
                 .toList();
     }
 }
