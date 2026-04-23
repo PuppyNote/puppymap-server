@@ -41,7 +41,7 @@ public class LoginController {
     }
 
     @PostMapping("/password/email/send")
-    public ApiResponse<String> sendPasswordResetEmail(@Valid @RequestBody EmailSendRequest request) {
+    public ApiResponse<Long> sendPasswordResetEmail(@Valid @RequestBody EmailSendRequest request) {
         return ApiResponse.ok(loginService.sendPasswordResetEmail(request.toServiceRequest()));
     }
 

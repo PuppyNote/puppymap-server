@@ -47,8 +47,8 @@ public class PlaceRepositoryImpl implements PlaceRepository {
     }
 
     @Override
-    public List<Place> findTop20NearbyOrderByLikeCount(double lat, double lng, double radiusKm) {
-        return placeJpaRepository.findTop20NearbyOrderByLikeCount(lat, lng, radiusKm);
+    public List<Place> findTop20NearbyOrderByLikeCount(double lat, double lng, double radiusKm, String category) {
+        return placeJpaRepository.findTop20NearbyOrderByLikeCount(lat, lng, radiusKm, category);
     }
 
     @Override

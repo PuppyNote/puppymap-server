@@ -4,16 +4,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class PasswordResetServiceRequest {
+public class EmailVerifyServiceRequest {
 
     private final Long verificationId;
     private final String code;
-    private final String newPassword;
 
     @Builder
-    private PasswordResetServiceRequest(Long verificationId, String code, String newPassword) {
+    private EmailVerifyServiceRequest(Long verificationId, String code) {
         this.verificationId = verificationId;
         this.code = code;
-        this.newPassword = newPassword;
     }
 }

@@ -13,7 +13,7 @@ public interface PlaceRepository {
     List<Place> findAllApproved();
     List<Place> findAllByUserId(Long userId);
     List<Place> findAllByStatus(PlaceStatus status);
-    List<Place> findTop20NearbyOrderByLikeCount(double lat, double lng, double radiusKm);
+    List<Place> findTop20NearbyOrderByLikeCount(double lat, double lng, double radiusKm, String category);
     void delete(Place place);
     void updateLikeCount(Long placeId);
 }

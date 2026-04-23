@@ -21,6 +21,6 @@ public interface LoginService {
 
     void resetPassword(PasswordResetServiceRequest request);
 
-    String sendPasswordResetEmail(EmailSendServiceRequest request);
+    Long sendPasswordResetEmail(EmailSendServiceRequest request);
 
 }

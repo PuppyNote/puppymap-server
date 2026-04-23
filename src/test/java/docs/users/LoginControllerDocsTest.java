@@ -162,7 +162,7 @@ class LoginControllerDocsTest extends RestDocsSupport {
     @DisplayName("비밀번호 재설정 이메일 전송 API")
     @Test
     void 비밀번호_재설정_이메일_전송() throws Exception {
-        given(loginService.sendPasswordResetEmail(any())).willReturn("이메일이 전송되었습니다.");
+        given(loginService.sendPasswordResetEmail(any())).willReturn(1L);
 
         String requestBody = objectMapper.writeValueAsString(
                 EmailSendRequest.builder()
@@ -185,7 +185,7 @@ class LoginControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                 fieldWithPath("httpStatus").type(JsonFieldType.STRING).description("HTTP 상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data").type(JsonFieldType.STRING).description("전송 결과 메시지")
+                                fieldWithPath("data").type(JsonFieldType.NUMBER).description("인증 ID (비밀번호 재설정 시 사용)")
                         )
                 ));
     }
@@ -195,7 +195,8 @@ class LoginControllerDocsTest extends RestDocsSupport {
     void 비밀번호_재설정() throws Exception {
         String requestBody = objectMapper.writeValueAsString(
                 PasswordResetRequest.builder()
-                        .email("test@example.com")
+                        .verificationId(1L)
+                        .code("123456")
                         .newPassword("newPassword123")
                         .build()
         );
@@ -209,7 +210,8 @@ class LoginControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                                fieldWithPath("verificationId").type(JsonFieldType.NUMBER).description("인증 ID"),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("인증번호"),
                                 fieldWithPath("newPassword").type(JsonFieldType.STRING).description("새 비밀번호")
                         ),
                         responseFields(

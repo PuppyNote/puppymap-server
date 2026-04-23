@@ -28,6 +28,7 @@ public interface PlaceJpaRepository extends JpaRepository<Place, Long> {
             SELECT * FROM places p
             WHERE p.status = 'APPROVED'
               AND p.deleted_at IS NULL
+              AND (:category IS NULL OR p.category = :category)
               AND (6371 * acos(
                     cos(radians(:lat)) * cos(radians(p.latitude))
                     * cos(radians(p.longitude) - radians(:lng))
@@ -39,7 +40,8 @@ public interface PlaceJpaRepository extends JpaRepository<Place, Long> {
     List<Place> findTop20NearbyOrderByLikeCount(
             @Param("lat") double lat,
             @Param("lng") double lng,
-            @Param("radiusKm") double radiusKm);
+            @Param("radiusKm") double radiusKm,
+            @Param("category") String category);
 
     @Modifying
     @Query("UPDATE Place p SET p.likeCount = (SELECT COUNT(pl) FROM PlaceLike pl WHERE pl.placeId = p.id) WHERE p.id = :placeId")

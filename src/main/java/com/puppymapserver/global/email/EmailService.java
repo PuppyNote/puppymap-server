@@ -1,6 +1,6 @@
 package com.puppymapserver.global.email;
 
 public interface EmailService {
-    String sendVerificationCode(String email);
-    boolean verifyCode(String email, String code);
+    Long sendVerificationCode(String email);
+    boolean verifyCode(Long verificationId, String code);
 }

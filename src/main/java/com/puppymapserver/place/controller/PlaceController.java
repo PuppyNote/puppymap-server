@@ -53,9 +53,10 @@ public class PlaceController {
     public ApiResponse<List<PlaceResponse>> getTop20Nearby(
             @RequestParam double lat,
             @RequestParam double lng,
-            @RequestParam(defaultValue = "5.0") double radiusKm) {
+            @RequestParam(defaultValue = "5.0") double radiusKm,
+            @RequestParam(required = false) String category) {
         return ApiResponse.of(HttpStatus.OK, "근처 인기 장소 조회 성공",
-                placeReadService.getTop20NearbyByLikeCount(lat, lng, radiusKm));
+                placeReadService.getTop20NearbyByLikeCount(lat, lng, radiusKm, category));
     }
 
     @GetMapping("/search")

@@ -8,6 +8,7 @@ import com.puppymapserver.user.users.repository.UserRepository;
 import com.puppymapserver.user.users.service.UserReadService;
 import com.puppymapserver.user.users.service.UserService;
 import com.puppymapserver.user.users.service.request.EmailSendServiceRequest;
+import com.puppymapserver.user.users.service.request.EmailVerifyServiceRequest;
 import com.puppymapserver.user.users.service.request.SignUpServiceRequest;
 import com.puppymapserver.user.users.service.response.SignUpResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +34,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String sendVerificationEmail(EmailSendServiceRequest request) {
+    public Long sendVerificationEmail(EmailSendServiceRequest request) {
         checkExistEmail(request.getEmail());
         return emailService.sendVerificationCode(request.getEmail());
+    }
+
+    @Override
+    public boolean verifyEmail(EmailVerifyServiceRequest request) {
+        return emailService.verifyCode(request.getVerificationId(), request.getCode());
     }
 
     @Override

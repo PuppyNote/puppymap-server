@@ -19,7 +19,12 @@
       "Bash(git commit -m 'docs: asciidoc API 문서 인덱스 추가 *)",
       "Bash(git commit -m 'chore: 배포 스크립트 포트 및 SSM 경로 수정 *)",
       "Bash(git commit *)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(./gradlew test *)",
+      "Bash(git -C C:/Users/tkdrl/Desktop/PProject/puppymap-server status)",
+      "Bash(git *)",
+      "Bash(./gradlew asciidoctor *)",
+      "Bash(./gradlew dependencies *)"
     ]
   }
 }

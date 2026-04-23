@@ -82,6 +82,12 @@ public class PlaceReadServiceImpl implements PlaceReadService {
                         .fields("title", "content"))));
             }
 
+            // 카테고리 필터 (선택)
+            if (request.getCategory() != null && !request.getCategory().isBlank()) {
+                String category = request.getCategory();
+                queries.add(Query.of(q -> q.term(t -> t.field("category").value(category))));
+            }
+
             BoolQuery.Builder boolBuilder = new BoolQuery.Builder();
             queries.forEach(boolBuilder::must);
             Query finalQuery = Query.of(q -> q.bool(boolBuilder.build()));
@@ -110,8 +116,8 @@ public class PlaceReadServiceImpl implements PlaceReadService {
     }
 
     @Override
-    public List<PlaceResponse> getTop20NearbyByLikeCount(double lat, double lng, double radiusKm) {
-        return placeRepository.findTop20NearbyOrderByLikeCount(lat, lng, radiusKm).stream()
+    public List<PlaceResponse> getTop20NearbyByLikeCount(double lat, double lng, double radiusKm, String category) {
+        return placeRepository.findTop20NearbyOrderByLikeCount(lat, lng, radiusKm, category).stream()
                 .map(p -> PlaceResponse.of(p, s3StorageService::getPlaceCloudFrontUrl))
                 .toList();
     }

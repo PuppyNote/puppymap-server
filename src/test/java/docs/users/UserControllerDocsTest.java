@@ -77,7 +77,7 @@ class UserControllerDocsTest extends RestDocsSupport {
     @DisplayName("이메일 인증 전송 API")
     @Test
     void 이메일_인증_전송() throws Exception {
-        given(userService.sendVerificationEmail(any())).willReturn("인증 이메일이 전송되었습니다.");
+        given(userService.sendVerificationEmail(any())).willReturn(1L);
 
         String requestBody = objectMapper.writeValueAsString(
                 EmailSendRequest.builder()
@@ -100,7 +100,7 @@ class UserControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                 fieldWithPath("httpStatus").type(JsonFieldType.STRING).description("HTTP 상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data").type(JsonFieldType.STRING).description("전송 결과 메시지")
+                                fieldWithPath("data").type(JsonFieldType.NUMBER).description("인증 ID (이메일 인증 시 사용)")
                         )
                 ));
     }

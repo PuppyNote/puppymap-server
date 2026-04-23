@@ -2,6 +2,8 @@ package com.puppymapserver.user.users.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.puppymapserver.global.email.EmailService;
+import com.puppymapserver.global.email.EmailVerification;
+import com.puppymapserver.global.email.EmailVerificationRepository;
 import com.puppymapserver.global.exception.PuppyMapException;
 import com.puppymapserver.jwt.JwtTokenGenerator;
 import com.puppymapserver.jwt.dto.JwtToken;
@@ -44,13 +46,16 @@ public class LoginServiceImpl implements LoginService {
     private final JwtTokenGenerator jwtTokenGenerator;
     private final Map<SnsType, OAuthApiClient> clients;
     private final EmailService emailService;
+    private final EmailVerificationRepository verificationRepository;
 
     private final UserRepository userRepository;
     private final UserReadService userReadService;
     private final RefreshTokenReadService refreshTokenReadService;
+
     public LoginServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, JwtTokenGenerator jwtTokenGenerator,
                             List<OAuthApiClient> clients, UserRepository userRepository, UserReadService userReadService,
-                            RefreshTokenReadService refreshTokenReadService, EmailService emailService) {
+                            RefreshTokenReadService refreshTokenReadService, EmailService emailService,
+                            EmailVerificationRepository verificationRepository) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userRepository = userRepository;
         this.jwtTokenGenerator = jwtTokenGenerator;
@@ -60,6 +65,7 @@ public class LoginServiceImpl implements LoginService {
         this.userReadService = userReadService;
         this.refreshTokenReadService = refreshTokenReadService;
         this.emailService = emailService;
+        this.verificationRepository = verificationRepository;
     }
 
     @Override
@@ -119,7 +125,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public String sendPasswordResetEmail(EmailSendServiceRequest request) {
+    public Long sendPasswordResetEmail(EmailSendServiceRequest request) {
         User user = userReadService.findByEmail(request.getEmail());
         checkSnsType(user);
         return emailService.sendVerificationCode(request.getEmail());
@@ -127,7 +133,19 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public void resetPassword(PasswordResetServiceRequest request) {
-        User user = userReadService.findByEmail(request.getEmail());
+        EmailVerification verification = verificationRepository.findById(request.getVerificationId())
+                .orElseThrow(() -> new PuppyMapException("유효하지 않은 인증 요청입니다."));
+        if (verification.isVerified()) {
+            throw new PuppyMapException("이미 사용된 인증번호입니다.");
+        }
+        if (verification.isExpired()) {
+            throw new PuppyMapException("인증번호가 만료되었습니다.");
+        }
+        if (!verification.getCode().equals(request.getCode())) {
+            throw new PuppyMapException("인증번호가 일치하지 않습니다.");
+        }
+        verification.markVerified();
+        User user = userReadService.findByEmail(verification.getEmail());
         checkSnsType(user);
         user.updatePassword(bCryptPasswordEncoder.encode(request.getNewPassword()));
     }

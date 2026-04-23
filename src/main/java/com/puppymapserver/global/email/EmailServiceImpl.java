@@ -1,11 +1,13 @@
 package com.puppymapserver.global.email;
 
+import com.puppymapserver.global.exception.PuppyMapException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Random;
 
@@ -14,26 +16,36 @@ import java.util.Random;
 public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
-    private final EmailVerificationStore verificationStore;
+    private final EmailVerificationRepository verificationRepository;
 
     private static final String SENDER_EMAIL = "puppynote0330@gmail.com";
-    private static final String SENDER_NAME = "PuppyNote";
+    private static final String SENDER_NAME = "PuppyMap";
 
     @Override
-    public String sendVerificationCode(String email) {
+    @Transactional
+    public Long sendVerificationCode(String email) {
         String code = generateCode();
-        verificationStore.save(email, code);
+        EmailVerification verification = verificationRepository.save(EmailVerification.of(email, code));
         sendEmail(email, code);
-        return code;
+        return verification.getId();
     }
 
     @Override
-    public boolean verifyCode(String email, String code) {
-        boolean result = verificationStore.verify(email, code);
-        if (result) {
-            verificationStore.remove(email);
+    @Transactional
+    public boolean verifyCode(Long verificationId, String code) {
+        EmailVerification verification = verificationRepository.findById(verificationId)
+                .orElseThrow(() -> new PuppyMapException("유효하지 않은 인증 요청입니다."));
+        if (verification.isVerified()) {
+            throw new PuppyMapException("이미 사용된 인증번호입니다.");
         }
-        return result;
+        if (verification.isExpired()) {
+            throw new PuppyMapException("인증번호가 만료되었습니다.");
+        }
+        if (!verification.getCode().equals(code)) {
+            return false;
+        }
+        verification.markVerified();
+        return true;
     }
 
     private String generateCode() {
@@ -48,7 +60,7 @@ public class EmailServiceImpl implements EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setFrom(SENDER_EMAIL, SENDER_NAME);
             helper.setTo(to);
-            helper.setSubject("[PuppyNote] 이메일 인증번호를 확인해주세요");
+            helper.setSubject("[PuppyMap] 이메일 인증번호를 확인해주세요");
             helper.setText(buildHtml(code), true);
             mailSender.send(message);
         } catch (MessagingException | java.io.UnsupportedEncodingException e) {
@@ -82,7 +94,7 @@ public class EmailServiceImpl implements EmailService {
                                             </tr>
                                             <tr>
                                                 <td align="center">
-                                                    <p style="margin:0;font-size:32px;font-weight:800;color:#ffffff;letter-spacing:-1px;text-shadow:0 2px 4px rgba(0,0,0,0.1);">PuppyNote</p>
+                                                    <p style="margin:0;font-size:32px;font-weight:800;color:#ffffff;letter-spacing:-1px;text-shadow:0 2px 4px rgba(0,0,0,0.1);">PuppyMap</p>
                                                     <p style="margin:6px 0 0;font-size:14px;color:rgba(255,255,255,0.9);font-weight:500;letter-spacing:0.5px;">이메일 인증</p>
                                                 </td>
                                             </tr>
@@ -95,7 +107,7 @@ public class EmailServiceImpl implements EmailService {
                                     <td style="padding:48px 48px 40px;">
                                         <p style="margin:0 0 6px;font-size:24px;font-weight:700;color:#1a1a1a;letter-spacing:-0.5px;">안녕하세요! 👋</p>
                                         <p style="margin:0 0 36px;font-size:15px;color:#666;line-height:1.8;">
-                                            PuppyNote를 이용해 주셔서 감사합니다.<br>
+                                            PuppyMap를 이용해 주셔서 감사합니다.<br>
                                             아래 인증번호를 입력하여 이메일 인증을 완료해 주세요.
                                         </p>
 
@@ -136,10 +148,10 @@ public class EmailServiceImpl implements EmailService {
                                 <tr>
                                     <td style="padding:28px 48px;text-align:center;">
                                         <p style="margin:0 0 8px;font-size:20px;">🐶</p>
-                                        <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#eebd2b;">PuppyNote</p>
+                                        <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#eebd2b;">PuppyMap</p>
                                         <p style="margin:0;font-size:11px;color:#bbb;line-height:1.7;">
                                             반려동물과의 소중한 일상을 기록하세요<br>
-                                            © 2025 PuppyNote. All rights reserved.
+                                            © 2025 PuppyMap. All rights reserved.
                                         </p>
                                     </td>
                                 </tr>

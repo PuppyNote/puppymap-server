@@ -73,7 +73,7 @@ class PlaceControllerDocsTest extends RestDocsSupport {
     @DisplayName("근처 인기 장소 Top20 조회 API")
     @Test
     void 근처_인기_장소_Top20_조회() throws Exception {
-        given(placeReadService.getTop20NearbyByLikeCount(37.5665, 126.9780, 5.0))
+        given(placeReadService.getTop20NearbyByLikeCount(37.5665, 126.9780, 5.0, null))
                 .willReturn(List.of(samplePlace(PlaceStatus.APPROVED)));
 
         mockMvc.perform(get("/api/v1/places/nearby/top")
@@ -89,7 +89,8 @@ class PlaceControllerDocsTest extends RestDocsSupport {
                         queryParameters(
                                 parameterWithName("lat").description("중심 위도"),
                                 parameterWithName("lng").description("중심 경도"),
-                                parameterWithName("radiusKm").description("반경 (km, 기본값: 5.0)").optional()
+                                parameterWithName("radiusKm").description("반경 (km, 기본값: 5.0)").optional(),
+                                parameterWithName("category").description("카테고리 필터 (PARK, TRAIL, CAFE, ETC) - 없으면 전체").optional()
                         ),
                         responseFields(
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
@@ -216,7 +217,8 @@ class PlaceControllerDocsTest extends RestDocsSupport {
                                 parameterWithName("keyword").description("검색 키워드").optional(),
                                 parameterWithName("lat").description("중심 위도").optional(),
                                 parameterWithName("lng").description("중심 경도").optional(),
-                                parameterWithName("radius").description("반경 (km)").optional()
+                                parameterWithName("radius").description("반경 (km)").optional(),
+                                parameterWithName("category").description("카테고리 필터 (PARK, TRAIL, CAFE, ETC) - 없으면 전체").optional()
                         ),
                         responseFields(
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),

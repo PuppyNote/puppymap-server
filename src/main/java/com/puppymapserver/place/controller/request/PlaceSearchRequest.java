@@ -22,12 +22,15 @@ public class PlaceSearchRequest {
     @NotNull(message = "반경은 필수입니다.")
     private Double radius;
 
+    private String category;
+
     public PlaceSearchServiceRequest toServiceRequest() {
         return PlaceSearchServiceRequest.builder()
                 .keyword(keyword)
                 .lat(lat)
                 .lng(lng)
                 .radiusKm(radius)
+                .category(category)
                 .build();
     }
 }
