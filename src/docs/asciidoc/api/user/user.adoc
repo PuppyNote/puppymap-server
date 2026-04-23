@@ -24,6 +24,19 @@ include::{snippets}/user-email-send/request-fields.adoc[]
 include::{snippets}/user-email-send/http-response.adoc[]
 include::{snippets}/user-email-send/response-fields.adoc[]
 
+[[user-email-verify]]
+=== 이메일 인증 확인
+
+==== HTTP Request
+
+include::{snippets}/user-email-verify/http-request.adoc[]
+include::{snippets}/user-email-verify/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/user-email-verify/http-response.adoc[]
+include::{snippets}/user-email-verify/response-fields.adoc[]
+
 [[user-withdraw]]
 === 회원 탈퇴
 

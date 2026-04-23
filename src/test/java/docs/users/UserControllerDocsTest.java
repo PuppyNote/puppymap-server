@@ -4,6 +4,8 @@ import com.puppymapserver.user.users.controller.UserController;
 import com.puppymapserver.user.users.controller.request.EmailSendRequest;
 import com.puppymapserver.user.users.controller.request.SignUpRequest;
 import com.puppymapserver.user.users.controller.request.UserProfileUpdateRequest;
+
+import java.util.Map;
 import com.puppymapserver.user.users.service.UserReadService;
 import com.puppymapserver.user.users.service.UserService;
 import com.puppymapserver.user.users.service.response.SignUpResponse;
@@ -101,6 +103,36 @@ class UserControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("httpStatus").type(JsonFieldType.STRING).description("HTTP 상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
                                 fieldWithPath("data").type(JsonFieldType.NUMBER).description("인증 ID (이메일 인증 시 사용)")
+                        )
+                ));
+    }
+
+    @DisplayName("이메일 인증 확인 API")
+    @Test
+    void 이메일_인증_확인() throws Exception {
+        given(userService.verifyEmail(any())).willReturn(true);
+
+        String requestBody = objectMapper.writeValueAsString(
+                Map.of("verificationId", 1, "code", "123456")
+        );
+
+        mockMvc.perform(post("/api/v1/user/email/verify")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("user-email-verify",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("verificationId").type(JsonFieldType.NUMBER).description("인증 ID (이메일 전송 후 응답받은 값)"),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("이메일로 수신한 인증번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                fieldWithPath("httpStatus").type(JsonFieldType.STRING).description("HTTP 상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                fieldWithPath("data").type(JsonFieldType.BOOLEAN).description("인증 성공 여부")
                         )
                 ));
     }
