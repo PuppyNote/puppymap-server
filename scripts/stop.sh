@@ -1,5 +1,5 @@
 #!/bin/bash
-APP_DIR=/home/ec2-user/app
+APP_DIR=/home/ec2-user/web
 
 # active_port 기준으로 비활성 포트 계산 (inactive_port 파일은 stale할 수 있음)
 ACTIVE_PORT=$(cat $APP_DIR/active_port 2>/dev/null || echo "8082")

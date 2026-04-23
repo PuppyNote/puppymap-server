@@ -1,5 +1,5 @@
 #!/bin/bash
-APP_DIR=/home/ec2-user/app
+APP_DIR=/home/ec2-user/web
 INACTIVE_PORT=$(cat $APP_DIR/inactive_port 2>/dev/null || echo "8083")
 
 echo "헬스체크 대상 포트: $INACTIVE_PORT"
