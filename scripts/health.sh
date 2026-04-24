@@ -6,7 +6,7 @@ echo "헬스체크 대상 포트: $INACTIVE_PORT"
 
 # 최대 60초 대기
 for i in {1..12}; do
-  STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$INACTIVE_PORT/health-check)
+  STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$INACTIVE_PORT/web/health-check)
   if [ "$STATUS" = "200" ]; then
     echo "헬스체크 성공"
     exit 0

@@ -1,7 +1,7 @@
 #!/bin/bash
 APP_DIR=/home/ec2-user/web
 INACTIVE_PORT=$(cat $APP_DIR/inactive_port)
-ACTIVE_PORT=$(cat $APP_DIR/active_port 2>/dev/null || echo "8083")
+ACTIVE_PORT=$(cat $APP_DIR/active_port 2>/dev/null || echo "8082")
 
 echo "Nginx 트래픽 전환: $ACTIVE_PORT → $INACTIVE_PORT"
 
