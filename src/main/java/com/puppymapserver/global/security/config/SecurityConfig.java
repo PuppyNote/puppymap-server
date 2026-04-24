@@ -40,8 +40,7 @@ public class SecurityConfig {
             config.setAllowedHeaders(Collections.singletonList("*"));
             config.setAllowedMethods(Collections.singletonList("*"));
             config.setAllowedOrigins(Arrays.asList(
-                    "https://www.puppymap.co.kr",
-                    "https://puppymap.co.kr",
+                    "https://map.puppynote.co.kr",
                     "http://localhost:3000"
             ));
             config.setAllowCredentials(true);
