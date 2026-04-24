@@ -65,18 +65,42 @@ public class PlaceReadServiceImpl implements PlaceReadService {
     }
 
     @Override
-    public List<PlaceResponse> searchPlaces(PlaceSearchServiceRequest request) {
-        List<Long> placeIds = placeElasticsearchService.searchByGeo(request);
-        List<Place> places = placeIds.stream()
+    public PageCustom<PlaceResponse> searchPlaces(PlaceSearchServiceRequest request, PageInfoServiceRequest pageInfo) {
+        int from = (pageInfo.getPage() - 1) * pageInfo.getSize();
+        PlaceElasticsearchService.ElasticPageResult result = placeElasticsearchService.searchByGeo(request, from, pageInfo.getSize());
+
+        List<Place> places = result.placeIds().stream()
                 .map(id -> placeRepository.findApprovedById(id).orElse(null))
                 .filter(Objects::nonNull)
                 .toList();
-        return toResponses(places);
+
+        int totalPage = (int) Math.ceil((double) result.totalElement() / pageInfo.getSize());
+
+        return PageCustom.<PlaceResponse>builder()
+                .content(toResponses(places))
+                .pageInfo(PageableCustom.builder()
+                        .currentPage(pageInfo.getPage())
+                        .totalPage(totalPage)
+                        .totalElement(result.totalElement())
+                        .build())
+                .build();
     }
 
     @Override
-    public List<PlaceResponse> getTop20NearbyByLikeCount(double lat, double lng, double radiusKm, String category) {
-        return toResponses(placeRepository.findTop20NearbyOrderByLikeCount(lat, lng, radiusKm, category));
+    public PageCustom<PlaceResponse> getNearbyByLikeCount(double lat, double lng, double radiusKm, String category, PageInfoServiceRequest pageInfo) {
+        int offset = (pageInfo.getPage() - 1) * pageInfo.getSize();
+        List<Place> places = placeRepository.findNearbyOrderByLikeCount(lat, lng, radiusKm, category, pageInfo.getSize(), offset);
+        long totalElement = placeRepository.countNearby(lat, lng, radiusKm, category);
+        int totalPage = (int) Math.ceil((double) totalElement / pageInfo.getSize());
+
+        return PageCustom.<PlaceResponse>builder()
+                .content(toResponses(places))
+                .pageInfo(PageableCustom.builder()
+                        .currentPage(pageInfo.getPage())
+                        .totalPage(totalPage)
+                        .totalElement(totalElement)
+                        .build())
+                .build();
     }
 
     @Override

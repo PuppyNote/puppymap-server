@@ -24,7 +24,7 @@ public class PlaceElasticsearchServiceImpl implements PlaceElasticsearchService 
     private final ElasticsearchClient elasticsearchClient;
 
     @Override
-    public List<Long> searchByGeo(PlaceSearchServiceRequest request) {
+    public ElasticPageResult searchByGeo(PlaceSearchServiceRequest request, int from, int size) {
         try {
             List<Query> queries = new ArrayList<>();
 
@@ -50,11 +50,14 @@ public class PlaceElasticsearchServiceImpl implements PlaceElasticsearchService 
             SearchRequest searchRequest = SearchRequest.of(s -> s
                     .index("places")
                     .source(src -> src.fetch(false))
-                    .query(Query.of(q -> q.bool(boolBuilder.build()))));
+                    .query(Query.of(q -> q.bool(boolBuilder.build())))
+                    .from(from)
+                    .size(size));
 
             SearchResponse<PlaceDocument> response = elasticsearchClient.search(searchRequest, PlaceDocument.class);
 
-            return extractIds(response);
+            long totalElement = response.hits().total() != null ? response.hits().total().value() : 0;
+            return new ElasticPageResult(extractIds(response), totalElement);
         } catch (IOException e) {
             throw new RuntimeException("검색 중 오류가 발생했습니다.", e);
         }

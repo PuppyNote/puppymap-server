@@ -35,9 +35,28 @@ public interface PlaceJpaRepository extends JpaRepository<Place, Long> {
                     + sin(radians(:lat)) * sin(radians(p.latitude))
                   )) <= :radiusKm
             ORDER BY p.like_count DESC
-            LIMIT 20
+            LIMIT :size OFFSET :offset
             """, nativeQuery = true)
-    List<Place> findTop20NearbyOrderByLikeCount(
+    List<Place> findNearbyOrderByLikeCount(
+            @Param("lat") double lat,
+            @Param("lng") double lng,
+            @Param("radiusKm") double radiusKm,
+            @Param("category") String category,
+            @Param("size") int size,
+            @Param("offset") int offset);
+
+    @Query(value = """
+            SELECT COUNT(*) FROM places p
+            WHERE p.status = 'APPROVED'
+              AND p.deleted_at IS NULL
+              AND (:category IS NULL OR p.category = :category)
+              AND (6371 * acos(
+                    cos(radians(:lat)) * cos(radians(p.latitude))
+                    * cos(radians(p.longitude) - radians(:lng))
+                    + sin(radians(:lat)) * sin(radians(p.latitude))
+                  )) <= :radiusKm
+            """, nativeQuery = true)
+    long countNearby(
             @Param("lat") double lat,
             @Param("lng") double lng,
             @Param("radiusKm") double radiusKm,

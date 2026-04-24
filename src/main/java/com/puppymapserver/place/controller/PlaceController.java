@@ -52,19 +52,22 @@ public class PlaceController {
     }
 
     @GetMapping("/nearby/top")
-    public ApiResponse<List<PlaceResponse>> getTop20Nearby(
+    public ApiResponse<PageCustom<PlaceResponse>> getTop20Nearby(
             @RequestParam double lat,
             @RequestParam double lng,
             @RequestParam(defaultValue = "5.0") double radiusKm,
-            @RequestParam(required = false) String category) {
+            @RequestParam(required = false) String category,
+            @ModelAttribute PageInfoRequest pageInfo) {
         return ApiResponse.of(HttpStatus.OK, "근처 인기 장소 조회 성공",
-                placeReadService.getTop20NearbyByLikeCount(lat, lng, radiusKm, category));
+                placeReadService.getNearbyByLikeCount(lat, lng, radiusKm, category, pageInfo.toServiceRequest()));
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<PlaceResponse>> search(@Validated @ModelAttribute PlaceSearchRequest request) {
+    public ApiResponse<PageCustom<PlaceResponse>> search(
+            @Validated @ModelAttribute PlaceSearchRequest request,
+            @ModelAttribute PageInfoRequest pageInfo) {
         return ApiResponse.of(HttpStatus.OK, "검색 성공",
-                placeReadService.searchPlaces(request.toServiceRequest()));
+                placeReadService.searchPlaces(request.toServiceRequest(), pageInfo.toServiceRequest()));
     }
 
     @GetMapping("/list")

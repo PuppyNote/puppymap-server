@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -75,13 +76,24 @@ class PlaceControllerDocsTest extends RestDocsSupport {
     @DisplayName("근처 인기 장소 Top20 조회 API")
     @Test
     void 근처_인기_장소_Top20_조회() throws Exception {
-        given(placeReadService.getTop20NearbyByLikeCount(37.5665, 126.9780, 5.0, null))
-                .willReturn(List.of(samplePlace(PlaceStatus.APPROVED)));
+        PageCustom<PlaceResponse> pageResult = PageCustom.<PlaceResponse>builder()
+                .content(List.of(samplePlace(PlaceStatus.APPROVED)))
+                .pageInfo(PageableCustom.builder()
+                        .currentPage(1)
+                        .totalPage(3)
+                        .totalElement(30)
+                        .build())
+                .build();
+
+        given(placeReadService.getNearbyByLikeCount(anyDouble(), anyDouble(), anyDouble(), any(), any()))
+                .willReturn(pageResult);
 
         mockMvc.perform(get("/api/v1/places/nearby/top")
                         .param("lat", "37.5665")
                         .param("lng", "126.9780")
                         .param("radiusKm", "5.0")
+                        .param("page", "1")
+                        .param("size", "12")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -92,27 +104,32 @@ class PlaceControllerDocsTest extends RestDocsSupport {
                                 parameterWithName("lat").description("중심 위도"),
                                 parameterWithName("lng").description("중심 경도"),
                                 parameterWithName("radiusKm").description("반경 (km, 기본값: 5.0)").optional(),
-                                parameterWithName("category").description("카테고리 필터 (PARK, TRAIL, CAFE, ETC) - 없으면 전체").optional()
+                                parameterWithName("category").description("카테고리 필터 (PARK, TRAIL, CAFE, ETC) - 없으면 전체").optional(),
+                                parameterWithName("page").description("페이지 번호 (1부터 시작, 기본값: 1)").optional(),
+                                parameterWithName("size").description("페이지 크기 (기본값: 12)").optional()
                         ),
                         responseFields(
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                 fieldWithPath("httpStatus").type(JsonFieldType.STRING).description("HTTP 상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("장소 ID"),
-                                fieldWithPath("data[].userId").type(JsonFieldType.NUMBER).description("제보자 ID"),
-                                fieldWithPath("data[].userNickName").type(JsonFieldType.STRING).description("제보자 닉네임"),
-                                fieldWithPath("data[].title").type(JsonFieldType.STRING).description("장소 제목"),
-                                fieldWithPath("data[].content").type(JsonFieldType.STRING).description("장소 설명"),
-                                fieldWithPath("data[].latitude").type(JsonFieldType.NUMBER).description("위도"),
-                                fieldWithPath("data[].longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                fieldWithPath("data[].category").type(JsonFieldType.STRING).description("카테고리"),
-                                fieldWithPath("data[].status").type(JsonFieldType.STRING).description("승인 상태"),
-                                fieldWithPath("data[].largeDogAvailable").type(JsonFieldType.BOOLEAN).description("대형견 가능 여부"),
-                                fieldWithPath("data[].parkingAvailable").type(JsonFieldType.BOOLEAN).description("주차 가능 여부"),
-                                fieldWithPath("data[].offLeashAvailable").type(JsonFieldType.BOOLEAN).description("오프리쉬 가능 여부"),
-                                fieldWithPath("data[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
-                                fieldWithPath("data[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),
-                                fieldWithPath("data[].createdDate").type(JsonFieldType.STRING).description("생성 일시")
+                                fieldWithPath("data.content[].id").type(JsonFieldType.NUMBER).description("장소 ID"),
+                                fieldWithPath("data.content[].userId").type(JsonFieldType.NUMBER).description("제보자 ID"),
+                                fieldWithPath("data.content[].userNickName").type(JsonFieldType.STRING).description("제보자 닉네임"),
+                                fieldWithPath("data.content[].title").type(JsonFieldType.STRING).description("장소 제목"),
+                                fieldWithPath("data.content[].content").type(JsonFieldType.STRING).description("장소 설명"),
+                                fieldWithPath("data.content[].latitude").type(JsonFieldType.NUMBER).description("위도"),
+                                fieldWithPath("data.content[].longitude").type(JsonFieldType.NUMBER).description("경도"),
+                                fieldWithPath("data.content[].category").type(JsonFieldType.STRING).description("카테고리"),
+                                fieldWithPath("data.content[].status").type(JsonFieldType.STRING).description("승인 상태"),
+                                fieldWithPath("data.content[].largeDogAvailable").type(JsonFieldType.BOOLEAN).description("대형견 가능 여부"),
+                                fieldWithPath("data.content[].parkingAvailable").type(JsonFieldType.BOOLEAN).description("주차 가능 여부"),
+                                fieldWithPath("data.content[].offLeashAvailable").type(JsonFieldType.BOOLEAN).description("오프리쉬 가능 여부"),
+                                fieldWithPath("data.content[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
+                                fieldWithPath("data.content[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),
+                                fieldWithPath("data.content[].createdDate").type(JsonFieldType.STRING).description("생성 일시"),
+                                fieldWithPath("data.pageInfo.currentPage").type(JsonFieldType.NUMBER).description("현재 페이지"),
+                                fieldWithPath("data.pageInfo.totalPage").type(JsonFieldType.NUMBER).description("전체 페이지 수"),
+                                fieldWithPath("data.pageInfo.totalElement").type(JsonFieldType.NUMBER).description("전체 항목 수")
                         )
                 ));
     }
@@ -201,14 +218,24 @@ class PlaceControllerDocsTest extends RestDocsSupport {
     @DisplayName("장소 검색 API")
     @Test
     void 장소_검색() throws Exception {
-        given(placeReadService.searchPlaces(any()))
-                .willReturn(List.of(samplePlace(PlaceStatus.APPROVED)));
+        PageCustom<PlaceResponse> pageResult = PageCustom.<PlaceResponse>builder()
+                .content(List.of(samplePlace(PlaceStatus.APPROVED)))
+                .pageInfo(PageableCustom.builder()
+                        .currentPage(1)
+                        .totalPage(3)
+                        .totalElement(30)
+                        .build())
+                .build();
+
+        given(placeReadService.searchPlaces(any(), any())).willReturn(pageResult);
 
         mockMvc.perform(get("/api/v1/places/search")
                         .param("keyword", "강아지")
                         .param("lat", "37.5665")
                         .param("lng", "126.9780")
                         .param("radius", "5.0")
+                        .param("page", "1")
+                        .param("size", "12")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -220,27 +247,32 @@ class PlaceControllerDocsTest extends RestDocsSupport {
                                 parameterWithName("lat").description("중심 위도").optional(),
                                 parameterWithName("lng").description("중심 경도").optional(),
                                 parameterWithName("radius").description("반경 (km)").optional(),
-                                parameterWithName("category").description("카테고리 필터 (PARK, TRAIL, CAFE, ETC) - 없으면 전체").optional()
+                                parameterWithName("category").description("카테고리 필터 (PARK, TRAIL, CAFE, ETC) - 없으면 전체").optional(),
+                                parameterWithName("page").description("페이지 번호 (1부터 시작, 기본값: 1)").optional(),
+                                parameterWithName("size").description("페이지 크기 (기본값: 12)").optional()
                         ),
                         responseFields(
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                 fieldWithPath("httpStatus").type(JsonFieldType.STRING).description("HTTP 상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("장소 ID"),
-                                fieldWithPath("data[].userId").type(JsonFieldType.NUMBER).description("제보자 ID"),
-                                fieldWithPath("data[].userNickName").type(JsonFieldType.STRING).description("제보자 닉네임"),
-                                fieldWithPath("data[].title").type(JsonFieldType.STRING).description("장소 제목"),
-                                fieldWithPath("data[].content").type(JsonFieldType.STRING).description("장소 설명"),
-                                fieldWithPath("data[].latitude").type(JsonFieldType.NUMBER).description("위도"),
-                                fieldWithPath("data[].longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                fieldWithPath("data[].category").type(JsonFieldType.STRING).description("카테고리"),
-                                fieldWithPath("data[].status").type(JsonFieldType.STRING).description("승인 상태"),
-                                fieldWithPath("data[].largeDogAvailable").type(JsonFieldType.BOOLEAN).description("대형견 가능 여부"),
-                                fieldWithPath("data[].parkingAvailable").type(JsonFieldType.BOOLEAN).description("주차 가능 여부"),
-                                fieldWithPath("data[].offLeashAvailable").type(JsonFieldType.BOOLEAN).description("오프리쉬 가능 여부"),
-                                fieldWithPath("data[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
-                                fieldWithPath("data[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),
-                                fieldWithPath("data[].createdDate").type(JsonFieldType.STRING).description("생성 일시")
+                                fieldWithPath("data.content[].id").type(JsonFieldType.NUMBER).description("장소 ID"),
+                                fieldWithPath("data.content[].userId").type(JsonFieldType.NUMBER).description("제보자 ID"),
+                                fieldWithPath("data.content[].userNickName").type(JsonFieldType.STRING).description("제보자 닉네임"),
+                                fieldWithPath("data.content[].title").type(JsonFieldType.STRING).description("장소 제목"),
+                                fieldWithPath("data.content[].content").type(JsonFieldType.STRING).description("장소 설명"),
+                                fieldWithPath("data.content[].latitude").type(JsonFieldType.NUMBER).description("위도"),
+                                fieldWithPath("data.content[].longitude").type(JsonFieldType.NUMBER).description("경도"),
+                                fieldWithPath("data.content[].category").type(JsonFieldType.STRING).description("카테고리"),
+                                fieldWithPath("data.content[].status").type(JsonFieldType.STRING).description("승인 상태"),
+                                fieldWithPath("data.content[].largeDogAvailable").type(JsonFieldType.BOOLEAN).description("대형견 가능 여부"),
+                                fieldWithPath("data.content[].parkingAvailable").type(JsonFieldType.BOOLEAN).description("주차 가능 여부"),
+                                fieldWithPath("data.content[].offLeashAvailable").type(JsonFieldType.BOOLEAN).description("오프리쉬 가능 여부"),
+                                fieldWithPath("data.content[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
+                                fieldWithPath("data.content[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),
+                                fieldWithPath("data.content[].createdDate").type(JsonFieldType.STRING).description("생성 일시"),
+                                fieldWithPath("data.pageInfo.currentPage").type(JsonFieldType.NUMBER).description("현재 페이지"),
+                                fieldWithPath("data.pageInfo.totalPage").type(JsonFieldType.NUMBER).description("전체 페이지 수"),
+                                fieldWithPath("data.pageInfo.totalElement").type(JsonFieldType.NUMBER).description("전체 항목 수")
                         )
                 ));
     }

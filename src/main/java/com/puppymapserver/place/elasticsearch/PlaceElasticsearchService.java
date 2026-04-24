@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PlaceElasticsearchService {
 
-    List<Long> searchByGeo(PlaceSearchServiceRequest request);
+    ElasticPageResult searchByGeo(PlaceSearchServiceRequest request, int from, int size);
 
     ElasticPageResult searchByKeyword(String keyword, int from, int size);
 

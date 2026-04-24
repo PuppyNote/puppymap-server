@@ -14,8 +14,8 @@ public interface PlaceReadService {
     Place findApprovedByIdOrThrow(Long placeId);
     List<PlaceResponse> getApprovedPlaces(PlaceFilterServiceRequest request);
     PlaceResponse getApprovedPlace(Long placeId);
-    List<PlaceResponse> searchPlaces(PlaceSearchServiceRequest request);
-    List<PlaceResponse> getTop20NearbyByLikeCount(double lat, double lng, double radiusKm, String category);
+    PageCustom<PlaceResponse> searchPlaces(PlaceSearchServiceRequest request, PageInfoServiceRequest pageInfo);
+    PageCustom<PlaceResponse> getNearbyByLikeCount(double lat, double lng, double radiusKm, String category, PageInfoServiceRequest pageInfo);
     List<PlaceResponse> getMyPlaces(Long userId);
     PageCustom<PlaceResponse> getPlacesByKeyword(String keyword, PageInfoServiceRequest pageInfo);
 }
