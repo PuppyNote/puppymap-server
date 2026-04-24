@@ -1,18 +1,15 @@
 package com.puppymapserver.place.service.impl;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch.core.SearchRequest;
-import co.elastic.clients.elasticsearch.core.SearchResponse;
-import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.puppymapserver.global.exception.NotFoundException;
-import com.puppymapserver.place.elasticsearch.PlaceDocument;
+import com.puppymapserver.global.page.request.PageInfoServiceRequest;
+import com.puppymapserver.global.page.response.PageCustom;
+import com.puppymapserver.global.page.response.PageableCustom;
+import com.puppymapserver.place.elasticsearch.PlaceElasticsearchService;
+import com.puppymapserver.place.elasticsearch.PlaceElasticsearchService.ElasticPageResult;
 import com.puppymapserver.redis.service.PlaceLikeRedisService;
 import com.puppymapserver.storage.service.S3StorageService;
 import com.puppymapserver.place.entity.Place;
 import com.puppymapserver.place.entity.enums.PlaceCategory;
-import com.puppymapserver.place.entity.enums.PlaceStatus;
 import com.puppymapserver.place.repository.PlaceRepository;
 import com.puppymapserver.place.service.PlaceReadService;
 import com.puppymapserver.place.service.request.PlaceFilterServiceRequest;
@@ -22,8 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +29,7 @@ import java.util.Objects;
 public class PlaceReadServiceImpl implements PlaceReadService {
 
     private final PlaceRepository placeRepository;
-    private final ElasticsearchClient elasticsearchClient;
+    private final PlaceElasticsearchService placeElasticsearchService;
     private final S3StorageService s3StorageService;
     private final PlaceLikeRedisService placeLikeRedisService;
 
@@ -71,54 +66,12 @@ public class PlaceReadServiceImpl implements PlaceReadService {
 
     @Override
     public List<PlaceResponse> searchPlaces(PlaceSearchServiceRequest request) {
-        try {
-            List<Query> queries = new ArrayList<>();
-
-            // 지도 중심 반경 필터 (항상 적용)
-            String distance = request.getRadiusKm() + "km";
-            queries.add(Query.of(q -> q.geoDistance(g -> g
-                    .field("location")
-                    .location(l -> l.latlon(ll -> ll.lat(request.getLat()).lon(request.getLng())))
-                    .distance(distance))));
-
-            // 키워드 필터 (선택)
-            if (request.getKeyword() != null && !request.getKeyword().isBlank()) {
-                queries.add(Query.of(q -> q.multiMatch(m -> m
-                        .query(request.getKeyword())
-                        .fields("title", "content"))));
-            }
-
-            // 카테고리 필터 (선택)
-            if (request.getCategory() != null && !request.getCategory().isBlank()) {
-                String category = request.getCategory();
-                queries.add(Query.of(q -> q.term(t -> t.field("category").value(category))));
-            }
-
-            BoolQuery.Builder boolBuilder = new BoolQuery.Builder();
-            queries.forEach(boolBuilder::must);
-            Query finalQuery = Query.of(q -> q.bool(boolBuilder.build()));
-
-            SearchRequest searchRequest = SearchRequest.of(s -> s
-                    .index("places")
-                    .source(src -> src.fetch(false))
-                    .query(finalQuery));
-
-            SearchResponse<PlaceDocument> response = elasticsearchClient.search(searchRequest, PlaceDocument.class);
-
-            List<Long> placeIds = response.hits().hits().stream()
-                    .map(Hit::id).filter(Objects::nonNull)
-                    .map(Long::valueOf)
-                    .toList();
-
-            List<Place> places = placeIds.stream()
-                    .map(id -> placeRepository.findApprovedById(id).orElse(null))
-                    .filter(Objects::nonNull)
-                    .toList();
-            return toResponses(places);
-
-        } catch (IOException e) {
-            throw new RuntimeException("검색 중 오류가 발생했습니다.", e);
-        }
+        List<Long> placeIds = placeElasticsearchService.searchByGeo(request);
+        List<Place> places = placeIds.stream()
+                .map(id -> placeRepository.findApprovedById(id).orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
+        return toResponses(places);
     }
 
     @Override
@@ -129,6 +82,28 @@ public class PlaceReadServiceImpl implements PlaceReadService {
     @Override
     public List<PlaceResponse> getMyPlaces(Long userId) {
         return toResponses(placeRepository.findAllByUserId(userId));
+    }
+
+    @Override
+    public PageCustom<PlaceResponse> getPlacesByKeyword(String keyword, PageInfoServiceRequest pageInfo) {
+        int from = (pageInfo.getPage() - 1) * pageInfo.getSize();
+        ElasticPageResult result = placeElasticsearchService.searchByKeyword(keyword, from, pageInfo.getSize());
+
+        List<Place> places = result.placeIds().stream()
+                .map(id -> placeRepository.findApprovedById(id).orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
+
+        int totalPage = (int) Math.ceil((double) result.totalElement() / pageInfo.getSize());
+
+        return PageCustom.<PlaceResponse>builder()
+                .content(toResponses(places))
+                .pageInfo(PageableCustom.builder()
+                        .currentPage(pageInfo.getPage())
+                        .totalPage(totalPage)
+                        .totalElement(result.totalElement())
+                        .build())
+                .build();
     }
 
     private List<PlaceResponse> toResponses(List<Place> places) {

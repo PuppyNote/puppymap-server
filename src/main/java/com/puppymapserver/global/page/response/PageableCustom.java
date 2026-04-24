@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 @Getter
 @NoArgsConstructor
 public class PageableCustom {
+
     private int currentPage;
     private int totalPage;
     private long totalElement;
@@ -21,9 +22,9 @@ public class PageableCustom {
 
     public static <T> PageableCustom of(Page<T> page) {
         return PageableCustom.builder()
-            .currentPage(page.getNumber() + 1)
-            .totalPage(page.getTotalPages())
-            .totalElement(page.getTotalElements())
-            .build();
+                .currentPage(page.getNumber() + 1)
+                .totalPage(page.getTotalPages())
+                .totalElement(page.getTotalElements())
+                .build();
     }
 }

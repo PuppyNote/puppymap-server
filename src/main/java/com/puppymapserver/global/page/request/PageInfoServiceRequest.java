@@ -1,20 +1,23 @@
 package com.puppymapserver.global.page.request;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @Getter
-@NoArgsConstructor
-@SuperBuilder
 public class PageInfoServiceRequest {
 
-	private int page;
-	private int size;
+    private final int page;
+    private final int size;
 
-	public Pageable toPageable() {
-		return PageRequest.of(page - 1, size);
-	}
+    @Builder
+    private PageInfoServiceRequest(int page, int size) {
+        this.page = page;
+        this.size = size;
+    }
+
+    public Pageable toPageable() {
+        return PageRequest.of(page - 1, size);
+    }
 }

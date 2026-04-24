@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class PageCustom<T> implements Serializable {
+
     private List<T> content;
     private PageableCustom pageInfo;
 
@@ -22,8 +23,8 @@ public class PageCustom<T> implements Serializable {
 
     public static <T> PageCustom<T> of(Page<T> page) {
         return PageCustom.<T>builder()
-            .content(page.getContent())
-            .pageInfo(PageableCustom.of(page))
-            .build();
+                .content(page.getContent())
+                .pageInfo(PageableCustom.of(page))
+                .build();
     }
 }

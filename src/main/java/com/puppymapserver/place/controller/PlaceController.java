@@ -1,6 +1,8 @@
 package com.puppymapserver.place.controller;
 
 import com.puppymapserver.global.ApiResponse;
+import com.puppymapserver.global.page.request.PageInfoRequest;
+import com.puppymapserver.global.page.response.PageCustom;
 import com.puppymapserver.global.security.SecurityService;
 import com.puppymapserver.jwt.dto.LoginUserInfo;
 import com.puppymapserver.like.service.PlaceLikeService;
@@ -63,6 +65,14 @@ public class PlaceController {
     public ApiResponse<List<PlaceResponse>> search(@Validated @ModelAttribute PlaceSearchRequest request) {
         return ApiResponse.of(HttpStatus.OK, "검색 성공",
                 placeReadService.searchPlaces(request.toServiceRequest()));
+    }
+
+    @GetMapping("/list")
+    public ApiResponse<PageCustom<PlaceResponse>> getPlacesByKeyword(
+            @RequestParam(required = false) String keyword,
+            @ModelAttribute PageInfoRequest pageInfo) {
+        return ApiResponse.of(HttpStatus.OK, "장소 목록 조회 성공",
+                placeReadService.getPlacesByKeyword(keyword, pageInfo.toServiceRequest()));
     }
 
     @GetMapping("/{placeId}/reviews")

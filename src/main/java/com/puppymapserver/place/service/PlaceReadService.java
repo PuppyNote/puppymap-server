@@ -1,5 +1,7 @@
 package com.puppymapserver.place.service;
 
+import com.puppymapserver.global.page.request.PageInfoServiceRequest;
+import com.puppymapserver.global.page.response.PageCustom;
 import com.puppymapserver.place.entity.Place;
 import com.puppymapserver.place.service.request.PlaceFilterServiceRequest;
 import com.puppymapserver.place.service.request.PlaceSearchServiceRequest;
@@ -15,4 +17,5 @@ public interface PlaceReadService {
     List<PlaceResponse> searchPlaces(PlaceSearchServiceRequest request);
     List<PlaceResponse> getTop20NearbyByLikeCount(double lat, double lng, double radiusKm, String category);
     List<PlaceResponse> getMyPlaces(Long userId);
+    PageCustom<PlaceResponse> getPlacesByKeyword(String keyword, PageInfoServiceRequest pageInfo);
 }
