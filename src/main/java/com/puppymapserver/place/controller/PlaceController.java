@@ -73,9 +73,10 @@ public class PlaceController {
     @GetMapping("/list")
     public ApiResponse<PageCustom<PlaceResponse>> getPlacesByKeyword(
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String category,
             @ModelAttribute PageInfoRequest pageInfo) {
         return ApiResponse.of(HttpStatus.OK, "장소 목록 조회 성공",
-                placeReadService.getPlacesByKeyword(keyword, pageInfo.toServiceRequest()));
+                placeReadService.getPlacesByKeyword(keyword, category, pageInfo.toServiceRequest()));
     }
 
     @GetMapping("/{placeId}/reviews")

@@ -289,7 +289,7 @@ class PlaceControllerDocsTest extends RestDocsSupport {
                         .build())
                 .build();
 
-        given(placeReadService.getPlacesByKeyword(any(), any())).willReturn(pageResult);
+        given(placeReadService.getPlacesByKeyword(any(), any(), any())).willReturn(pageResult);
 
         mockMvc.perform(get("/api/v1/places/list")
                         .param("keyword", "강아지")
@@ -303,6 +303,7 @@ class PlaceControllerDocsTest extends RestDocsSupport {
                         preprocessResponse(prettyPrint()),
                         queryParameters(
                                 parameterWithName("keyword").description("검색 키워드 (없으면 전체 조회)").optional(),
+                                parameterWithName("category").description("카테고리 필터 (PARK, TRAIL, CAFE, ETC) - 없으면 전체").optional(),
                                 parameterWithName("page").description("페이지 번호 (1부터 시작, 기본값: 1)").optional(),
                                 parameterWithName("size").description("페이지 크기 (기본값: 12)").optional()
                         ),

@@ -8,7 +8,7 @@ public interface PlaceElasticsearchService {
 
     ElasticPageResult searchByGeo(PlaceSearchServiceRequest request, int from, int size);
 
-    ElasticPageResult searchByKeyword(String keyword, int from, int size);
+    ElasticPageResult searchByKeyword(String keyword, String category, int from, int size);
 
     record ElasticPageResult(List<Long> placeIds, long totalElement) {}
 }

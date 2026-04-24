@@ -64,11 +64,20 @@ public class PlaceElasticsearchServiceImpl implements PlaceElasticsearchService 
     }
 
     @Override
-    public ElasticPageResult searchByKeyword(String keyword, int from, int size) {
+    public ElasticPageResult searchByKeyword(String keyword, String category, int from, int size) {
         try {
-            Query query = (keyword != null && !keyword.isBlank())
-                    ? Query.of(q -> q.multiMatch(m -> m.query(keyword).fields("title", "content")))
-                    : Query.of(q -> q.matchAll(m -> m));
+            List<Query> musts = new ArrayList<>();
+
+            if (keyword != null && !keyword.isBlank()) {
+                musts.add(Query.of(q -> q.multiMatch(m -> m.query(keyword).fields("title", "content"))));
+            }
+            if (category != null && !category.isBlank()) {
+                musts.add(Query.of(q -> q.term(t -> t.field("category").value(category))));
+            }
+
+            Query query = musts.isEmpty()
+                    ? Query.of(q -> q.matchAll(m -> m))
+                    : Query.of(q -> q.bool(b -> b.must(musts)));
 
             SearchRequest searchRequest = SearchRequest.of(s -> s
                     .index("places")

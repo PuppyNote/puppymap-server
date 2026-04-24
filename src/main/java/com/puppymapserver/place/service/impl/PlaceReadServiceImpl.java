@@ -109,9 +109,9 @@ public class PlaceReadServiceImpl implements PlaceReadService {
     }
 
     @Override
-    public PageCustom<PlaceResponse> getPlacesByKeyword(String keyword, PageInfoServiceRequest pageInfo) {
+    public PageCustom<PlaceResponse> getPlacesByKeyword(String keyword, String category, PageInfoServiceRequest pageInfo) {
         int from = (pageInfo.getPage() - 1) * pageInfo.getSize();
-        ElasticPageResult result = placeElasticsearchService.searchByKeyword(keyword, from, pageInfo.getSize());
+        ElasticPageResult result = placeElasticsearchService.searchByKeyword(keyword, category, from, pageInfo.getSize());
 
         List<Place> places = result.placeIds().stream()
                 .map(id -> placeRepository.findApprovedById(id).orElse(null))

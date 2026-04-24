@@ -17,5 +17,5 @@ public interface PlaceReadService {
     PageCustom<PlaceResponse> searchPlaces(PlaceSearchServiceRequest request, PageInfoServiceRequest pageInfo);
     PageCustom<PlaceResponse> getNearbyByLikeCount(double lat, double lng, double radiusKm, String category, PageInfoServiceRequest pageInfo);
     List<PlaceResponse> getMyPlaces(Long userId);
-    PageCustom<PlaceResponse> getPlacesByKeyword(String keyword, PageInfoServiceRequest pageInfo);
+    PageCustom<PlaceResponse> getPlacesByKeyword(String keyword, String category, PageInfoServiceRequest pageInfo);
 }
